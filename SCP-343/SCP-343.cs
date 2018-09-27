@@ -14,7 +14,7 @@ namespace SCP_343
 	name = "SCP-343",
 	description = "SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any item he picks up is instantly morphed into a Flashlight. He seeks to help out who he deems worthy.",
 	id = "Mith.SCP-343",
-	version = "1.0",
+	version = "1.02",
 	SmodMajor = 3,
 	SmodMinor = 1,
 	SmodRevision = 18
@@ -29,7 +29,7 @@ namespace SCP_343
 		public override void OnEnable()
 		{
 
-			this.Info("SCP-343 has been Enabled.");
+            this.Info("SCP-343 has been Enabled.");
 		}
 
 		public override void Register()
@@ -41,7 +41,7 @@ namespace SCP_343
 
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_spawnchance", 10f, Smod2.Config.SettingType.FLOAT, true, "Percent chance for SPC-343 to spawn at the start of the round."));
         }
-	}
+    }
 }
 
 namespace SCP_343Logic
@@ -79,7 +79,7 @@ namespace SCP_343Logic
 				TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
 				TheChosenOne.ChangeRole(Smod2.API.Role.TUTORIAL, true, false);
 				TheChosenOne.SetGodmode(true);
-				
+                TheChosenOne.SetRank("red", "SCP-343");
 				plugin.Info(TheChosenOne.Name + " is the Chosen One!");
 			}
 		}
@@ -102,7 +102,7 @@ namespace SCP_343Logic
 
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
 		{
-			if (ev.Player.TeamRole.Role == Role.TUTORIAL)
+            if (ev.Player.TeamRole.Role == Role.TUTORIAL && PluginManager.Manager.Server.Round.Duration >= 300)
 			{
 				ev.Allow = true;
 			}
