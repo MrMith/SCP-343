@@ -41,6 +41,7 @@ namespace SCP_343
 
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_spawnchance", 10f, Smod2.Config.SettingType.FLOAT, true, "Percent chance for SPC-343 to spawn at the start of the round."));
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_flashlights", false, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 turn everything into flashlights?"));
+            this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_opendoortime", 300, Smod2.Config.SettingType.NUMERIC, true, "How long in seconds till SPC-343 can open any door."));
         }
     }
 }
@@ -81,7 +82,7 @@ namespace SCP_343Logic
 				TheChosenOne.ChangeRole(Smod2.API.Role.TUTORIAL, true, false);
 				TheChosenOne.SetGodmode(true);
                 TheChosenOne.SetRank("red", "SCP-343");
-				plugin.Info(TheChosenOne.Name + " is the Chosen One!");
+				//plugin.Info(TheChosenOne.Name + " is the Chosen One!");
 			}
 		}
 
@@ -90,14 +91,14 @@ namespace SCP_343Logic
 			if(ev.Player.TeamRole.Role == Role.TUTORIAL)
 			{
 				ev.Items.Add(Smod2.API.ItemType.FLASHLIGHT);
-			}
+			}// 1st flashlight
 		}
 
 		public void OnPlayerPickupItem(PlayerPickupItemEvent ev)
 		{
 			if (ev.Player.TeamRole.Role == Role.TUTORIAL && ConfigManager.Manager.Config.GetBoolValue("SCP343_flashlights",false,false) == true)
 			{
-					ev.ChangeTo = Smod2.API.ItemType.FLASHLIGHT;
+			    ev.ChangeTo = Smod2.API.ItemType.FLASHLIGHT;
 			}else if (ev.Player.TeamRole.Role == Role.TUTORIAL && ConfigManager.Manager.Config.GetBoolValue("SCP343_flashlights", false, false) == false && PluginManager.Manager.Server.Round.Duration >= 3)
             {
                 ev.Allow = false;
@@ -106,10 +107,10 @@ namespace SCP_343Logic
 
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
 		{
-            if (ev.Player.TeamRole.Role == Role.TUTORIAL && PluginManager.Manager.Server.Round.Duration >= 300)
+            if (ev.Player.TeamRole.Role == Role.TUTORIAL && PluginManager.Manager.Server.Round.Duration >= ConfigManager.Manager.Config.GetFloatValue("SCP343_opendoortime", 300, false))
 			{
 				ev.Allow = true;
-			}
-		}
+            }// Allows 343 to open every door after a set amount of seconds.
+        }
 	}
 }
