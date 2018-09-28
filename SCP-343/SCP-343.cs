@@ -3,6 +3,7 @@ using Smod2;
 using Smod2.Attributes;
 using Smod2.EventHandlers;
 using Smod2.Events;
+using Smod2.EventSystem.Events;
 using Smod2.API;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,12 @@ namespace SCP_343
             this.Info("SCP-343 has been Enabled.");
 		}
 
-		public override void Register()
+        public void PlayerEvent(PlayerEvent ev)
+        {
+            this.Info(ev.Player + " wow playeritemevent");
+        }
+
+        public override void Register()
 		{
 			this.AddEventHandler(typeof(IEventHandlerPlayerPickupItem), new MainLogic(this), Priority.Normal);
 			this.AddEventHandler(typeof(IEventHandlerRoundStart), new MainLogic(this), Priority.Normal);
@@ -42,14 +48,17 @@ namespace SCP_343
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_spawnchance", 10f, Smod2.Config.SettingType.FLOAT, true, "Percent chance for SPC-343 to spawn at the start of the round."));
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_flashlights", false, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 turn everything into flashlights?"));
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_opendoortime", 300, Smod2.Config.SettingType.NUMERIC, true, "How long in seconds till SPC-343 can open any door."));
+            this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_HP", -1, Smod2.Config.SettingType.NUMERIC, true, "How much health should SCP-343 have. Set to -1 for GodMode."));
+            //this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_nuke_interact", true, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 beable to interact with the nuke."));
         }
     }
 }
 
 namespace SCP_343Logic
 {
-	public class MainLogic : IEventHandlerPlayerPickupItem,IEventHandlerRoundStart,IEventHandlerDoorAccess, IEventHandlerSetRole
-	{
+	public class MainLogic : IEventHandlerPlayerPickupItem,IEventHandlerRoundStart,IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt
+
+    {
 		Smod2.API.Player TheChosenOne;
 		
 		Random RNG = new Random();
@@ -64,7 +73,7 @@ namespace SCP_343Logic
 		{
 			List<Smod2.API.Player> PlayerList = new List<Smod2.API.Player>();
 			List<Smod2.API.Player> DClassList = new List<Smod2.API.Player>();
-
+            
 			int randomNumber = RNG.Next(0, 100);
             if (randomNumber <= ConfigManager.Manager.Config.GetFloatValue("SCP343_spawnchance", 10f, false))
 			{
@@ -80,7 +89,12 @@ namespace SCP_343Logic
 				
 				TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
 				TheChosenOne.ChangeRole(Smod2.API.Role.TUTORIAL, true, false);
-				TheChosenOne.SetGodmode(true);
+                if(ConfigManager.Manager.Config.GetIntValue("SCP343_HP", -1, false) == -1)
+                {
+                    TheChosenOne.SetGodmode(true);
+                }
+                else { TheChosenOne.SetHealth(ConfigManager.Manager.Config.GetIntValue("SCP343_HP", -1, false)); }
+				
                 TheChosenOne.SetRank("red", "SCP-343");
 				//plugin.Info(TheChosenOne.Name + " is the Chosen One!");
 			}
@@ -101,10 +115,10 @@ namespace SCP_343Logic
 			    ev.ChangeTo = Smod2.API.ItemType.FLASHLIGHT;
 			}else if (ev.Player.TeamRole.Role == Role.TUTORIAL && ConfigManager.Manager.Config.GetBoolValue("SCP343_flashlights", false, false) == false && PluginManager.Manager.Server.Round.Duration >= 3)
             {
-                ev.Allow = false;
+                ev.Item.Drop();//Idk how to not have it picked up
             } // duration here so 343 can have his first flashlight.
-		}
-
+        }
+        
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
 		{
             if (ev.Player.TeamRole.Role == Role.TUTORIAL && PluginManager.Manager.Server.Round.Duration >= ConfigManager.Manager.Config.GetFloatValue("SCP343_opendoortime", 300, false))
@@ -112,5 +126,13 @@ namespace SCP_343Logic
 				ev.Allow = true;
             }// Allows 343 to open every door after a set amount of seconds.
         }
-	}
+
+        public void OnPlayerHurt(PlayerHurtEvent ev)
+        {
+            if (ev.Player.TeamRole.Role == Smod2.API.Role.TUTORIAL && ev.Attacker.TeamRole.Team == Smod2.API.Team.SCP)
+            {
+                ev.Damage = 0;
+            }
+        }
+    }
 }
