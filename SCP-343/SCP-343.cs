@@ -16,7 +16,7 @@ namespace SCP_343
 	name = "SCP-343",
 	description = "SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any item he picks up is instantly morphed into a Flashlight. He seeks to help out who he deems worthy.",
 	id = "Mith.SCP-343",
-	version = "1.02",
+	version = "1.08",
 	SmodMajor = 3,
 	SmodMinor = 1,
 	SmodRevision = 18
@@ -43,6 +43,7 @@ namespace SCP_343
 			this.AddEventHandler(typeof(IEventHandlerWarheadStartCountdown), new MainLogic(this), Priority.Normal);
 			this.AddEventHandler(typeof(IEventHandlerWarheadStopCountdown), new MainLogic(this), Priority.Normal);
             this.AddCommand("SpawnSCP343", new SCP_343Commands.SpawnSCP343(this));
+            this.AddCommand("SCP343_Version", new SCP_343Commands.SCP343_Version(this));
 
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_spawnchance", 10f, Smod2.Config.SettingType.FLOAT, true, "Percent chance for SPC-343 to spawn at the start of the round."));
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_flashlights", false, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 turn everything into flashlights?"));
@@ -115,6 +116,7 @@ namespace SCP_343Logic
 			}else if (ev.Player.TeamRole.Role == Role.TUTORIAL && ConfigManager.Manager.Config.GetBoolValue("SCP343_flashlights", false, false) == false && PluginManager.Manager.Server.Round.Duration >= 3)
             {
                 ev.Item.Drop();//Idk how to not have it picked up
+                ev.Allow = false;
             } // duration here so 343 can have his first flashlight.
         }
         
@@ -209,6 +211,29 @@ namespace SCP_343Commands
             }
             else { return new string[] { "You must put a playerid." }; }
 
+        }
+    }
+    class SCP343_Version : ICommandHandler
+    {
+        private Plugin plugin;
+        public SCP343_Version(Plugin plugin)
+        {
+            this.plugin = plugin;
+        }
+
+        public string GetCommandDescription()
+        {
+            return "Version History for this plugin.";
+        }
+
+        public string GetUsage()
+        {
+            return "SpawnSCP343 PlayerID";
+        }
+
+        public string[] OnCall(ICommandSender sender, string[] args)
+        {
+            return new string[]{"This is version " + plugin.Details.version};
         }
     }
 }
