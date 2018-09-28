@@ -40,6 +40,7 @@ namespace SCP_343
 			this.AddEventHandler(typeof(IEventHandlerSetRole), new MainLogic(this), Priority.Normal);
 
             this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_spawnchance", 10f, Smod2.Config.SettingType.FLOAT, true, "Percent chance for SPC-343 to spawn at the start of the round."));
+            this.AddConfig(new Smod2.Config.ConfigSetting("SCP343_flashlights", false, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 turn everything into flashlights?"));
         }
     }
 }
@@ -94,10 +95,13 @@ namespace SCP_343Logic
 
 		public void OnPlayerPickupItem(PlayerPickupItemEvent ev)
 		{
-			if (ev.Player.TeamRole.Role == Role.TUTORIAL)
+			if (ev.Player.TeamRole.Role == Role.TUTORIAL && ConfigManager.Manager.Config.GetBoolValue("SCP343_flashlights",false,false) == true)
 			{
 					ev.ChangeTo = Smod2.API.ItemType.FLASHLIGHT;
-			}
+			}else if (ev.Player.TeamRole.Role == Role.TUTORIAL && ConfigManager.Manager.Config.GetBoolValue("SCP343_flashlights", false, false) == false && PluginManager.Manager.Server.Round.Duration >= 3)
+            {
+                ev.Allow = false;
+            } // duration here so 343 can have his first flashlight.
 		}
 
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
