@@ -11,7 +11,7 @@
 | Command(s)          | Value Type      | Description                              |
 |   :---:             |     :---:       |    :---:                                 |
 | SpawnSCP343         | PlayerID        | Spawn SCP-343. Example = "SpawnSCP343 2" |
-
+| SCP343_Version      | N/A             | Get the version of this plugin           |
 
 SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any item he picks up is instantly morphed into a Flashlight. He seeks to help out who he deems worthy. 
 
