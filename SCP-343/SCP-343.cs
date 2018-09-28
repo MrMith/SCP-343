@@ -34,13 +34,9 @@ namespace SCP_343
             this.Info("SCP-343 has been Enabled.");
 		}
 
-        public void PlayerEvent(PlayerEvent ev)
-        {
-            this.Info(ev.Player + " wow playeritemevent");
-        }
-
         public override void Register()
 		{
+
 			this.AddEventHandler(typeof(IEventHandlerPlayerPickupItem), new MainLogic(this), Priority.Normal);
 			this.AddEventHandler(typeof(IEventHandlerRoundStart), new MainLogic(this), Priority.Normal);
 			this.AddEventHandler(typeof(IEventHandlerDoorAccess), new MainLogic(this), Priority.Normal);
@@ -177,20 +173,16 @@ namespace SCP_343Commands
 
         public string GetCommandDescription()
         {
-            // This prints when someone types HELP HELLO
-            return "This command spawns in someone as SPC-343. Usage is SpawnSCP343 PlayerID";
+            return "This command spawns in someone as SPC-343.";
         }
 
         public string GetUsage()
         {
-            // This prints when someone types HELP HELLO
-            return "HELLO";
+            return "SpawnSCP343 PlayerID";
         }
 
         public string[] OnCall(ICommandSender sender, string[] args)
         {
-            // This will print 3 lines in console.
-            //return new string[] { "Hello World!", "My name is example plugin.", "thank you for listening, good bye!" };
             if (args.Length > 0)
             {
                 List<Smod2.API.Player> iList = new List<Smod2.API.Player>();
@@ -200,7 +192,6 @@ namespace SCP_343Commands
                 {
                     if (Playa.PlayerId.ToString() == args[0])
                     {
-                        plugin.Info(Playa.Name + " Dis the one?");
                         Player TheChosenOne = Playa;
                         TheChosenOne.ChangeRole(Smod2.API.Role.TUTORIAL, true, false);
                         if (ConfigManager.Manager.Config.GetIntValue("SCP343_HP", -1, false) == -1)
@@ -212,10 +203,10 @@ namespace SCP_343Commands
                         TheChosenOne.SetRank("red", "SCP-343");
                         return new string[] { "Made " + Playa.Name + " SCP343!" };
                     }
-                    else { return new string[] { "Invaild PlayerID" }; }
+                    else { return new string[] { "Invalid PlayerID" }; }
 
                 }
-                return new string[] { "It worked!" };
+                return new string[] { "" };
             }
             else { return new string[] { "You must put a playerid." }; }
 
