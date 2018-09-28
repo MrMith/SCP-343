@@ -18,3 +18,5 @@ SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight a
 Technically speaking hes a D-Class set to the role of TUTORIAL with godmode enabled and spawns with the D-Class. After a 5 minute period he can open every door in the game. Also to make sure he is passive every item he picks up or spawns with is turned into a flashlight. So people can know who he is, their rank is set to a red "SCP-343"
 
 The TUTORIAL class doesn't affect who wins and he talks the same way a normal D-Class does.
+
+If you see how stuff can be improved don't feel afraid to send me a pm or submit a issue.
