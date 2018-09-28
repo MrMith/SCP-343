@@ -36,7 +36,6 @@ namespace SCP_343
 
         public override void Register()
 		{
-
 			this.AddEventHandler(typeof(IEventHandlerPlayerPickupItem), new MainLogic(this), Priority.Normal);
 			this.AddEventHandler(typeof(IEventHandlerRoundStart), new MainLogic(this), Priority.Normal);
 			this.AddEventHandler(typeof(IEventHandlerDoorAccess), new MainLogic(this), Priority.Normal);
