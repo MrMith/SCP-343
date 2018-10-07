@@ -13,7 +13,7 @@
 
 | Command(s)                 | Value Type      | Description                              |
 |   :---:                    |     :---:       |    :---:                                 |
-| SpawnSCP343                | PlayerID        | Spawn SCP-343. Example = "SpawnSCP343 2" |
+| SpawnSCP343                | PlayerID        | Spawn SCP-343. Example = "SpawnSCP343 2", if for some reason this breaks you can use the forceclass command Example = "forceclass playerid 14"|
 | SCP343_Version             | N/A             | Get the version of this plugin           |
 
 SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy. 
