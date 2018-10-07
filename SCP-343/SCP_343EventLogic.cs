@@ -54,6 +54,17 @@ namespace SCP_343
 
         public void OnSetRole(PlayerSetRoleEvent ev)
         {
+            if(ev.Player.TeamRole.Role == Smod2.API.Role.TUTORIAL)
+            {
+                TheChosenOne = ev.Player;
+                if (ConfigManager.Manager.Config.GetIntValue("SCP343_HP", -1, false) == -1)
+                {
+                    TheChosenOne.SetGodmode(true);
+                }
+                else { TheChosenOne.SetHealth(ConfigManager.Manager.Config.GetIntValue("SCP343_HP", -1, false)); }
+
+                TheChosenOne.SetRank("red", "SCP-343");
+            }
             if (ev.Player.TeamRole.Role == Role.TUTORIAL)
             {
                 ev.Items.Add(Smod2.API.ItemType.FLASHLIGHT);
