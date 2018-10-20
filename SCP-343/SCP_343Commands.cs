@@ -8,10 +8,10 @@ using System.Text.RegularExpressions;
 namespace SCP_343
 {
 	class SpawnSCP343 : ICommandHandler
-	{
-		int PlayerID;
+	{ //Checks if the player's playerid is equal to the one given in the command args.
+		int PlayerIDInt;
 		String PlayerIDString;
-		private Plugin plugin;
+		private readonly Plugin plugin;
 		public SpawnSCP343(Plugin plugin)
 		{
 			this.plugin = plugin;
@@ -34,8 +34,8 @@ namespace SCP_343
 				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
 				{
 					PlayerIDString = Regex.Match(args[0], @"\d+").Value;
-					PlayerID = Int32.Parse(PlayerIDString);
-					if (Playa.PlayerId == PlayerID)
+					PlayerIDInt = Int32.Parse(PlayerIDString);
+					if (Playa.PlayerId == PlayerIDInt)
 					{
 						Playa.ChangeRole(Smod2.API.Role.CLASSD,true,true,true);
 						if (ConfigManager.Manager.Config.GetIntValue("scp343_hp", -1, false) == -1)
@@ -44,6 +44,7 @@ namespace SCP_343
 						}
 						else { Playa.SetHealth(ConfigManager.Manager.Config.GetIntValue("scp343_hp", -1, false)); }
 						SCP343.checkSteamIDIf343Dict[Playa.SteamId] = true;
+						SCP343.active343List.Add(Playa.SteamId);
 						Playa.SetRank("red", "SCP-343");
 						return new string[] { "Made " + Playa.Name + " SCP343!" };
 					}
@@ -51,11 +52,11 @@ namespace SCP_343
 				return new string[] { "" };
 			}
 			else { return new string[] { "You must put a playerid." }; }
-		}//Checks if the player's playerid is equal to the one given in the command args.
+		}
 	}
 
 	class SCP343_Version : ICommandHandler
-	{
+	{ //Return version for debugging purposes.
 		private Plugin plugin;
 		public SCP343_Version(Plugin plugin)
 		{
@@ -76,5 +77,5 @@ namespace SCP_343
 		{
 			return new string[] { "This is version " + plugin.Details.version };
 		}
-	}//Return version for debugging purposes.
+	}
 }
