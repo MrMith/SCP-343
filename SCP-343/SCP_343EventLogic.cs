@@ -68,7 +68,6 @@ namespace SCP_343
 					{
 						ev.Player.SetGodmode(false);
 					}
-					plugin.Info(SCP343.value + " test value");
 					ev.Player.SetRank("", "");
 					SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
 					SCP343.active343List.Remove(ev.Player.SteamId);
@@ -83,19 +82,15 @@ namespace SCP_343
 				if (SCP343.value)
 				{
 					int[] itemConvertList = ConfigManager.Manager.Config.GetIntListValue("scp343_itemstoconvert", new int[] { 13, 16, 20, 21, 23, 24, 25, 26 }, false);
-					plugin.Info((int)ev.Item.ItemType + " wow");
 					if (itemConvertList.Contains((int)ev.Item.ItemType))
 					{
-						plugin.Info((int)ev.Item.ItemType + " wow1");
 						int[] convertedItemList = ConfigManager.Manager.Config.GetIntListValue("scp343_converteditems", new int[] { 15 }, false);
 						ev.ChangeTo = (ItemType)convertedItemList[RNG.Next(convertedItemList.Length - 1)];
-						plugin.Info((int)ev.Item.ItemType + " wow2");
 					}
 
 					int[] itemBlackList = ConfigManager.Manager.Config.GetIntListValue("scp343_itemdroplist", new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 17, 19, 22, 27, 28, 29 }, false);
 					if (itemBlackList.Contains((int)ev.Item.ItemType))
 					{
-						plugin.Info((int)ev.Item.ItemType + " wow" + 3);
 						ev.Item.Drop();//Idk how to not have it picked up
 						ev.Allow = false;// This deletes the item :(
 					}
@@ -185,7 +180,6 @@ namespace SCP_343
 			{
 				if (SCP343.value)
 				{
-					plugin.Info(ev.Player.TeamRole + " teamrole");
 					ev.AllowEscape = false;
 				}
 			}

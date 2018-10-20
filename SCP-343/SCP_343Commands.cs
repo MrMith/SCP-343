@@ -35,9 +35,6 @@ namespace SCP_343
 				{
 					PlayerIDString = Regex.Match(args[0], @"\d+").Value;
 					PlayerID = Int32.Parse(PlayerIDString);
-					plugin.Info(Int32.Parse(PlayerIDString) + " regex test");
-					plugin.Info(PlayerID + " regex test");
-					plugin.Info(Playa.PlayerId.ToString() + " Playerid test");
 					if (Playa.PlayerId == PlayerID)
 					{
 						Playa.ChangeRole(Smod2.API.Role.CLASSD,true,true,true);
