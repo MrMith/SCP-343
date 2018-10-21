@@ -9,8 +9,7 @@ namespace SCP_343
 {
 	class SpawnSCP343 : ICommandHandler
 	{ //Checks if the player's playerid is equal to the one given in the command args.
-		int PlayerIDInt;
-		String PlayerIDString;
+		
 		private readonly Plugin plugin;
 		public SpawnSCP343(Plugin plugin)
 		{
@@ -33,8 +32,8 @@ namespace SCP_343
 			{
 				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
 				{
-					PlayerIDString = Regex.Match(args[0], @"\d+").Value;
-					PlayerIDInt = Int32.Parse(PlayerIDString);
+					string PlayerIDString = Regex.Match(args[0], @"\d+").Value;
+					int PlayerIDInt = Int32.Parse(PlayerIDString);
 					if (Playa.PlayerId == PlayerIDInt)
 					{
 						Playa.ChangeRole(Smod2.API.Role.CLASSD,true,true,true);

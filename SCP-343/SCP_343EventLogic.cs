@@ -13,15 +13,6 @@ namespace SCP_343
 	{
 		Random RNG = new Random();
 
-		private Player TheChosenOne;
-
-		DateTime timeOnEvent = DateTime.Now;
-		float bottomXPos;
-		float bottomZPos;
-		double XZdistance;
-		double Ydistance;
-		List<Vector> nukeElevator = new List<Vector>();
-
 		private Plugin plugin;
 		public EventLogic(Plugin plugin)
 		{
@@ -53,7 +44,7 @@ namespace SCP_343
 
 			if (DClassList.Count > 0 && plugin.pluginManager.Server.GetPlayers().Count >= 3)
 			{
-				TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
+				Player TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
 				SCP343.checkSteamIDIf343Dict[TheChosenOne.SteamId] = true;
 				SCP343.active343List.Add(TheChosenOne.SteamId);
 
@@ -197,22 +188,34 @@ namespace SCP_343
 		{
 			if (SCP343.active343List.Count >= 1)
 			{
-				if (PluginManager.Manager.Server.Round.Stats.SCPAlive == 0 && PluginManager.Manager.Server.Round.Stats.CiAlive == 0 && PluginManager.Manager.Server.Round.Stats.ClassDAlive == SCP343.active343List.Count && PluginManager.Manager.Server.Round.Stats.ScientistsAlive == 0)
+				var RoundStats = PluginManager.Manager.Server.Round.Stats;
+				if (RoundStats.SCPAlive == 0 
+					&& RoundStats.CiAlive == 0 
+					&& RoundStats.ClassDAlive == SCP343.active343List.Count
+					&& RoundStats.ScientistsAlive == 0)
 				{
 					ev.Status = ROUND_END_STATUS.MTF_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
-				else if (PluginManager.Manager.Server.Round.Stats.SCPAlive == 0 && PluginManager.Manager.Server.Round.Stats.ClassDAlive == SCP343.active343List.Count && PluginManager.Manager.Server.Round.Stats.ScientistsAlive == 0 && PluginManager.Manager.Server.Round.Stats.NTFAlive == 0)
+				else if (RoundStats.SCPAlive == 0 
+					&& RoundStats.ClassDAlive == SCP343.active343List.Count
+					&& RoundStats.ScientistsAlive == 0
+					&& RoundStats.NTFAlive == 0)
 				{
 					ev.Status = ROUND_END_STATUS.CI_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				}//If SCPs, ClassD, Scientists and MTF are dead then Chaos win.
-				else if (PluginManager.Manager.Server.Round.Stats.NTFAlive == 0 && PluginManager.Manager.Server.Round.Stats.CiAlive == 0 && PluginManager.Manager.Server.Round.Stats.ClassDAlive == SCP343.active343List.Count && PluginManager.Manager.Server.Round.Stats.ScientistsAlive == 0)
+				else if (RoundStats.NTFAlive == 0 
+					&& RoundStats.CiAlive == 0 
+					&& RoundStats.ClassDAlive == SCP343.active343List.Count 
+					&& RoundStats.ScientistsAlive == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
-				else if (PluginManager.Manager.Server.Round.Stats.NTFAlive == 0 && PluginManager.Manager.Server.Round.Stats.ClassDAlive == SCP343.active343List.Count && PluginManager.Manager.Server.Round.Stats.ScientistsAlive == 0)
+				else if (RoundStats.NTFAlive == 0 
+					&& RoundStats.ClassDAlive == SCP343.active343List.Count 
+					&& RoundStats.ScientistsAlive == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
@@ -242,41 +245,45 @@ namespace SCP_343
 					ev.TargetPosition = ev.LastPosition;
 				}
 			}
-		}
+		}//Preventing 343 from going into the pocket dimension.
 
 		public void OnUpdate(UpdateEvent ev)
 		{
+			DateTime timeOnEvent = DateTime.Now;
 			if (DateTime.Now >= timeOnEvent)
 			{
 				timeOnEvent = DateTime.Now.AddSeconds(2.0);
-				if (SCP343.active343List.Count >= 1)
+				if (!(SCP343.active343List.Count >= 1))
 				{
-					foreach (Player player in PluginManager.Manager.Server.GetPlayers())
+					return;
+				}
+				foreach (Player player in PluginManager.Manager.Server.GetPlayers())
+				{
+					foreach (String steamid in SCP343.active343List)
 					{
-						foreach (String steamid in SCP343.active343List)
+						if (steamid != player.SteamId)
 						{
-							if (steamid == player.SteamId)
+							return;
+						}
+						foreach (var elevator in Smod2.PluginManager.Manager.Server.Map.GetElevators())
+						{
+							if (elevator.ElevatorType == Smod2.API.ElevatorType.WarheadRoom)
 							{
-								foreach (var elevator in Smod2.PluginManager.Manager.Server.Map.GetElevators())
+								List<Vector> nukeElevator = new List<Vector>();
+								nukeElevator = elevator.GetPositions();
+								float bottomXPos = (nukeElevator[1].x - player.GetPosition().x) * 2;
+								float bottomZPos = (nukeElevator[1].z - player.GetPosition().z) * 2;
+								double XZdistance = Math.Sqrt(Math.Abs(bottomXPos) + Math.Abs(bottomZPos));
+								double Ydistance = Math.Abs(player.GetPosition().y) - Math.Abs(nukeElevator[1].y);
+								if (XZdistance <= 3 && Ydistance <= 0.5)
 								{
-									if (elevator.ElevatorType == Smod2.API.ElevatorType.WarheadRoom)
-									{
-										nukeElevator = elevator.GetPositions();
-										bottomXPos = (nukeElevator[1].x - player.GetPosition().x) * 2;
-										bottomZPos = (nukeElevator[1].z - player.GetPosition().z) * 2;
-										XZdistance = Math.Sqrt(Math.Abs(bottomXPos) + Math.Abs(bottomZPos));
-										Ydistance = Math.Abs(player.GetPosition().y) - Math.Abs(nukeElevator[1].y); 
-										if (XZdistance <= 10 && Ydistance <= 2)
-										{
-											player.Teleport(new Vector(nukeElevator[0].x, nukeElevator[0].y + 1, nukeElevator[0].z));
-										}
-									}
+									player.Teleport(new Vector(nukeElevator[0].x, nukeElevator[0].y + 1, nukeElevator[0].z));
 								}
 							}
 						}
 					}
 				}
 			}
-		}//Checks every 2 seconds if someone flagged for SCP-343 is within 10 x and z and within 2 y units (I think thats a meter?) and teleports them to the top of the elevator. I didn't use the PlayerElevatorUseEvent because I wanted them to be on the top and no chance to squeeze through aka admin teleport.
+		}//Checks every 2 seconds if someone flagged for SCP-343 is within 3 x and z units and within 0.5 y units (I think thats a meter?) and teleports them to the top of the elevator. I didn't use the PlayerElevatorUseEvent because I wanted them to be on the top and no chance to squeeze through aka admin teleport.
 	}
 }
