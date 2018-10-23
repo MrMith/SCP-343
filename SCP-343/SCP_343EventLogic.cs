@@ -21,19 +21,22 @@ namespace SCP_343
 
 		public void OnRoundStart(RoundStartEvent ev)
 		{
-
 			int randomNumber = RNG.Next(0, 100);
 
 			List<Smod2.API.Player> DClassList = new List<Smod2.API.Player>();
 
 			SCP343.checkSteamIDIf343Dict.Clear();
+			SCP343.checkSteamIDforBadgeName.Clear();
+			SCP343.checkSteamIDforBadgeColor.Clear();
 			SCP343.active343List.Clear();
-
+			
 			foreach (Smod2.API.Player Playa in plugin.pluginManager.Server.GetPlayers())
 			{
 				SCP343.checkSteamIDIf343Dict.Add(Playa.SteamId, false);
-
-				if (randomNumber <= ConfigManager.Manager.Config.GetFloatValue("scp343_spawnchance", 10f, false))
+				SCP343.checkSteamIDforBadgeColor[Playa.SteamId] = Playa.GetUserGroup().Color;
+				SCP343.checkSteamIDforBadgeName[Playa.SteamId] = Playa.GetUserGroup().Name;
+				
+				if (randomNumber <= (float)plugin.GetConfigFloat("scp343_spawnchance"))
 				{
 					if (Playa.TeamRole.Role == Smod2.API.Role.CLASSD)
 					{
@@ -42,24 +45,24 @@ namespace SCP_343
 				}
 			}
 
-			if (DClassList.Count > 0 && plugin.pluginManager.Server.GetPlayers().Count >= 3)
+			if (DClassList.Count > 0 && plugin.pluginManager.Server.GetPlayers().Count > 2)
 			{
 				Player TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
 				SCP343.checkSteamIDIf343Dict[TheChosenOne.SteamId] = true;
 				SCP343.active343List.Add(TheChosenOne.SteamId);
 
-				if (ConfigManager.Manager.Config.GetIntValue("scp343_hp", -1, false) == -1)
+				if (plugin.GetConfigInt("scp343_hp") == -1)
 				{
 					TheChosenOne.SetGodmode(true);
 				}
-				else { TheChosenOne.SetHealth(ConfigManager.Manager.Config.GetIntValue("scp343_hp", -1, false)); }
+				else { TheChosenOne.SetHealth(plugin.GetConfigInt("scp343_hp")); }
 				TheChosenOne.SetRank("red", "SCP-343");
 			}
 		}//Clears existing playerlist and active343s then stores current and based off spawnchance config option there might be SCP-343.
 
 		public void OnSetRole(PlayerSetRoleEvent ev)
 		{
-			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && ev.Player.TeamRole.Role != Smod2.API.Role.CLASSD)
+			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value))
 			{
 				if (SCP343.value)
 				{
@@ -67,7 +70,7 @@ namespace SCP_343
 					{
 						ev.Player.SetGodmode(false);
 					}
-					ev.Player.SetRank("", "");
+					ev.Player.SetRank(SCP343.checkSteamIDforBadgeColor[ev.Player.SteamId], SCP343.checkSteamIDforBadgeName[ev.Player.SteamId]);
 					SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
 					SCP343.active343List.Remove(ev.Player.SteamId);
 				}
@@ -76,14 +79,14 @@ namespace SCP_343
 
 		public void OnPlayerPickupItem(PlayerPickupItemEvent ev)
 		{
-			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && ConfigManager.Manager.Config.GetBoolValue("scp343_itemconverttoggle", false, false) == true)
+			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && plugin.GetConfigBool("scp343_itemconverttoggle") == true)
 			{
 				if (SCP343.value)
 				{
-					int[] itemConvertList = ConfigManager.Manager.Config.GetIntListValue("scp343_itemstoconvert", new int[] { 13, 16, 20, 21, 23, 24, 25, 26 }, false);
+					int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
 					if (itemConvertList.Contains((int)ev.Item.ItemType))
 					{
-						int[] convertedItemList = ConfigManager.Manager.Config.GetIntListValue("scp343_converteditems", new int[] { 15 }, false);
+						int[] convertedItemList = plugin.GetConfigIntList("scp343_converteditems");
 						ev.ChangeTo = (ItemType)convertedItemList[RNG.Next(convertedItemList.Length - 1)];
 					}
 
@@ -94,11 +97,11 @@ namespace SCP_343
 						ev.Allow = false;// This deletes the item :(
 					}
 				}
-				else if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && ConfigManager.Manager.Config.GetBoolValue("scp343_itemconverttoggle", false, false) == false && PluginManager.Manager.Server.Round.Duration >= 3)
+				else if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && plugin.GetConfigBool("scp343_itemconverttoggle") == false && PluginManager.Manager.Server.Round.Duration >= 3)
 				{
 					if (SCP343.value)
 					{
-						int[] itemWhiteList = ConfigManager.Manager.Config.GetIntListValue("scp343_alloweditems", new int[] { 12, 15 }, false);
+						int[] itemWhiteList = plugin.GetConfigIntList("scp343_alloweditems");
 						if (!(itemWhiteList.Contains((int)ev.Item.ItemType)))
 						{
 							ev.Item.Drop();//Idk how to not have it picked up
@@ -111,7 +114,7 @@ namespace SCP_343
 
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
 		{
-			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && PluginManager.Manager.Server.Round.Duration >= ConfigManager.Manager.Config.GetFloatValue("scp343_opendoortime", 300, false))
+			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && PluginManager.Manager.Server.Round.Duration >= (int)plugin.GetConfigInt("scp343_opendoortime"))
 			{
 				if (SCP343.value)
 				{
@@ -122,9 +125,9 @@ namespace SCP_343
 
 		public void OnPlayerHurt(PlayerHurtEvent ev)
 		{
-			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value) && ev.Attacker.TeamRole.Team == Smod2.API.Team.SCP)
+			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out SCP343.value))
 			{
-				if (SCP343.value)
+				if (SCP343.value && ev.Attacker.TeamRole.Team == Smod2.API.Team.SCP)
 				{
 					ev.Damage = 0;
 				}
@@ -139,7 +142,7 @@ namespace SCP_343
 				{
 					if (SCP343.value)
 					{
-						if (ConfigManager.Manager.Config.GetBoolValue("scp343_nuke_interact", true, false) == true)
+						if (plugin.GetConfigBool("scp343_nuke_interact") == true)
 						{
 							ev.Cancel = false;
 						}
@@ -160,7 +163,7 @@ namespace SCP_343
 				{
 					if (SCP343.value)
 					{
-						if (ConfigManager.Manager.Config.GetBoolValue("scp343_nuke_interact", true, false) == true)
+						if (plugin.GetConfigBool("scp343_nuke_interact") == true)
 						{
 							ev.Cancel = false;
 						}
@@ -188,34 +191,44 @@ namespace SCP_343
 		{
 			if (SCP343.active343List.Count >= 1)
 			{
-				var RoundStats = PluginManager.Manager.Server.Round.Stats;
-				if (RoundStats.SCPAlive == 0 
-					&& RoundStats.CiAlive == 0 
-					&& RoundStats.ClassDAlive == SCP343.active343List.Count
-					&& RoundStats.ScientistsAlive == 0)
+				SCP343.teamAliveCount.Clear();
+				foreach(Team team in Enum.GetValues(typeof(Team)))
+				{
+					SCP343.teamAliveCount[team] = 0;
+				}
+
+				foreach(Player player in PluginManager.Manager.Server.GetPlayers())
+				{
+					SCP343.teamAliveCount[player.TeamRole.Team]++;
+				}
+
+				if (SCP343.teamAliveCount[Team.SCP] == 0
+					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
+					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.active343List.Count
+					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.MTF_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
-				else if (RoundStats.SCPAlive == 0 
-					&& RoundStats.ClassDAlive == SCP343.active343List.Count
-					&& RoundStats.ScientistsAlive == 0
-					&& RoundStats.NTFAlive == 0)
+				else if (SCP343.teamAliveCount[Team.SCP] == 0
+					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.active343List.Count
+					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0
+					&& SCP343.teamAliveCount[Team.NINETAILFOX] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.CI_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				}//If SCPs, ClassD, Scientists and MTF are dead then Chaos win.
-				else if (RoundStats.NTFAlive == 0 
-					&& RoundStats.CiAlive == 0 
-					&& RoundStats.ClassDAlive == SCP343.active343List.Count 
-					&& RoundStats.ScientistsAlive == 0)
+				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
+					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
+					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.active343List.Count 
+					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
-				else if (RoundStats.NTFAlive == 0 
-					&& RoundStats.ClassDAlive == SCP343.active343List.Count 
-					&& RoundStats.ScientistsAlive == 0)
+				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
+					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.active343List.Count 
+					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
@@ -230,6 +243,12 @@ namespace SCP_343
 			{
 				if (SCP343.value)
 				{
+					if (ev.Player.GetGodmode())
+					{
+						ev.Player.SetGodmode(false);
+					}
+					ev.Player.SetRank(SCP343.checkSteamIDforBadgeColor[ev.Player.SteamId], SCP343.checkSteamIDforBadgeName[ev.Player.SteamId]);
+					SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
 					SCP343.active343List.Remove(ev.Player.SteamId);
 				}
 			}
@@ -275,7 +294,7 @@ namespace SCP_343
 								float bottomZPos = (nukeElevator[1].z - player.GetPosition().z) * 2;
 								double XZdistance = Math.Sqrt(Math.Abs(bottomXPos) + Math.Abs(bottomZPos));
 								double Ydistance = Math.Abs(player.GetPosition().y) - Math.Abs(nukeElevator[1].y);
-								if (XZdistance <= 3 && Ydistance <= 0.5)
+								if (XZdistance <= 3 && Ydistance <= 1.0)
 								{
 									player.Teleport(new Vector(nukeElevator[0].x, nukeElevator[0].y + 1, nukeElevator[0].z));
 								}
