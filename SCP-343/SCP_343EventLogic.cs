@@ -133,7 +133,7 @@ namespace SCP_343
 					if (ev.DamageType == DamageType.LURE)
 					{
 						{
-							ev.Damage = 0; ev.Player.Kill(DamageType.LURE);
+							ev.Player.Kill(DamageType.LURE);
 						}
 					}
 					ev.Damage = 0;
