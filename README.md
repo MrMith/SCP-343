@@ -1,5 +1,10 @@
 # [SCP-343](http://www.scp-wiki.net/scp-343)
 
+## Install Instructions.
+Put SCP-343.dll under the release tab into sm_plugins folder.
+
+
+## Config Options.
 | Config Option              | Value Type      | Default Value | Description |
 |   :---:                    |     :---:       |    :---:      |    :---:    |
 | scp343_spawnchance         | Float           | 10            | Percent chance for SPC-343 to spawn at the start of the round. |
@@ -16,9 +21,11 @@
 | spawnscp343                | PlayerID        | Spawn SCP-343. Example = "spawnscp343 2" |
 | scp343_version             | N/A             | Get the version of this plugin           |
 
+## Lore Friendly Description 
 SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy. 
-
-Technically speaking hes a D-Class with godmode enabled or HP with the config option and spawns with the D-Class. After a X minute period set by the server he can open every door in the game. Also to make sure he is passive every weapon he picks up or spawns with is converted to a flashlight or something the server config can change. So people can know who he is, their rank is set to a red "SCP-343"
+## Technical Description  
+Technically speaking hes a D-Class with godmode enabled or HP with the config option and spawns with the D-Class. After a X minute period set by the server he can open every door in the game. Also to make sure he is passive every weapon he picks up or spawns with is converted to a flashlight or something the server config can change. So people can know who he is, their rank is set to a red "SCP-343" and if they die or are set to a different class their rank name and color are reset to what it was orginally.
+SCP-343 doesn't affect who wins.
 
 
 If you see how stuff can be improved don't feel afraid to send me a pm or submit a issue.
