@@ -80,36 +80,38 @@ namespace SCP_343
 
 		public void OnPlayerPickupItem(PlayerPickupItemEvent ev)
 		{
-			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value) && plugin.GetConfigBool("scp343_itemconverttoggle") == true)
+			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
 				if (value)
 				{
-					int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
-					if (itemConvertList.Contains((int)ev.Item.ItemType))
+					if (plugin.GetConfigBool("scp343_itemconverttoggle") == true)
 					{
-						int[] convertedItemList = plugin.GetConfigIntList("scp343_converteditems");
-						ev.ChangeTo = (ItemType)convertedItemList[RNG.Next(convertedItemList.Length - 1)];
-					}
+						int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
+						if (itemConvertList.Contains((int)ev.Item.ItemType))
+						{
+							int[] convertedItemList = plugin.GetConfigIntList("scp343_converteditems");
+							ev.ChangeTo = (ItemType)convertedItemList[RNG.Next(convertedItemList.Length - 1)];
+						}
 
-					int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
-					if (itemBlackList.Contains((int)ev.Item.ItemType))
-					{
-						ev.Item.Drop();//Idk how to not have it picked up
-						ev.Allow = false;// This deletes the item :(
+						int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
+						if (itemBlackList.Contains((int)ev.Item.ItemType))
+						{
+							ev.Item.Drop();//Idk how to not have it picked up
+							ev.Allow = false;// This deletes the item :(
+						}
 					}
-				}
-				else if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value) && plugin.GetConfigBool("scp343_itemconverttoggle") == false && PluginManager.Manager.Server.Round.Duration >= 3)
-				{
-					if (value)
+					else if (plugin.GetConfigBool("scp343_itemconverttoggle") == false && PluginManager.Manager.Server.Round.Duration >= 3)
 					{
-						int[] itemWhiteList = plugin.GetConfigIntList("scp343_alloweditems");
-						if (!(itemWhiteList.Contains((int)ev.Item.ItemType)))
+						int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
+						int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
+						if (itemBlackList.Contains((int)ev.Item.ItemType) || itemConvertList.Contains((int)ev.Item.ItemType))
 						{
 							ev.Item.Drop();//Idk how to not have it picked up
 							ev.Allow = false;// This deletes the item :(
 						}
 					}
 				}
+				
 			}
 		}//The server operater can set if SCP-343 should convert items or just drop items. This is due to things like 100 flashlights lagging the server.
 
@@ -196,7 +198,7 @@ namespace SCP_343
 
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.active343List.Count >= 1)
+			if (SCP343.active343List.Count >= 1100)
 			{
 				SCP343.teamAliveCount.Clear();
 				foreach(Team team in Enum.GetValues(typeof(Team)))
