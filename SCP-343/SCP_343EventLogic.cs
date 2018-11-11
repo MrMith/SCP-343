@@ -198,7 +198,7 @@ namespace SCP_343
 
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.active343List.Count >= 1100)
+			if (SCP343.active343List.Count >= 1)
 			{
 				SCP343.teamAliveCount.Clear();
 				foreach(Team team in Enum.GetValues(typeof(Team)))
