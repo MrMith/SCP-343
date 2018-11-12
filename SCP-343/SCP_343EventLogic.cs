@@ -132,6 +132,10 @@ namespace SCP_343
 			{
 				if (value && ev.Attacker.TeamRole.Team == Smod2.API.Team.SCP)
 				{
+					if (plugin.GetConfigInt("scp343_hp") == -1)
+					{
+						ev.Player.SetGodmode(true);
+					}
 					if (ev.DamageType == DamageType.LURE)
 					{
 						{
