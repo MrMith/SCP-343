@@ -65,16 +65,14 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
-				if (value)
+				if (!value) return;
+				if (ev.Player.GetGodmode())
 				{
-					if (ev.Player.GetGodmode())
-					{
-						ev.Player.SetGodmode(false);
-					}
-					ev.Player.SetRank(SCP343.checkSteamIDforBadgeColor[ev.Player.SteamId], SCP343.checkSteamIDforBadgeName[ev.Player.SteamId]);
-					SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
-					SCP343.active343List.Remove(ev.Player.SteamId);
+					ev.Player.SetGodmode(false);
 				}
+				ev.Player.SetRank(SCP343.checkSteamIDforBadgeColor[ev.Player.SteamId], SCP343.checkSteamIDforBadgeName[ev.Player.SteamId]);
+				SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
+				SCP343.active343List.Remove(ev.Player.SteamId);
 			}
 		}//Checks if you're supposed to be SCP-343 but changes if you're a different class.
 
@@ -82,36 +80,34 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
-				if (value)
+				if (!value) return;
+				if (plugin.GetConfigBool("scp343_itemconverttoggle") == true)
 				{
-					if (plugin.GetConfigBool("scp343_itemconverttoggle") == true)
+					int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
+					if (itemConvertList.Contains((int)ev.Item.ItemType))
 					{
-						int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
-						if (itemConvertList.Contains((int)ev.Item.ItemType))
-						{
-							int[] convertedItemList = plugin.GetConfigIntList("scp343_converteditems");
-							ev.ChangeTo = (ItemType)convertedItemList[RNG.Next(convertedItemList.Length - 1)];
-						}
-
-						int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
-						if (itemBlackList.Contains((int)ev.Item.ItemType))
-						{
-							ev.Item.Drop();//Idk how to not have it picked up
-							ev.Allow = false;// This deletes the item :(
-						}
+						int[] convertedItemList = plugin.GetConfigIntList("scp343_converteditems");
+						ev.ChangeTo = (ItemType)convertedItemList[RNG.Next(convertedItemList.Length - 1)];
 					}
-					else if (plugin.GetConfigBool("scp343_itemconverttoggle") == false && PluginManager.Manager.Server.Round.Duration >= 3)
+
+					int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
+					if (itemBlackList.Contains((int)ev.Item.ItemType))
 					{
-						int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
-						int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
-						if (itemBlackList.Contains((int)ev.Item.ItemType) || itemConvertList.Contains((int)ev.Item.ItemType))
-						{
-							ev.Item.Drop();//Idk how to not have it picked up
-							ev.Allow = false;// This deletes the item :(
-						}
+						ev.Item.Drop();//Idk how to not have it picked up
+						ev.Allow = false;// This deletes the item :(
 					}
 				}
-				
+				else if (plugin.GetConfigBool("scp343_itemconverttoggle") == false && PluginManager.Manager.Server.Round.Duration >= 3)
+				{
+					int[] itemBlackList = plugin.GetConfigIntList("scp343_itemdroplist");
+					int[] itemConvertList = plugin.GetConfigIntList("scp343_itemstoconvert");
+					if (itemBlackList.Contains((int)ev.Item.ItemType) || itemConvertList.Contains((int)ev.Item.ItemType))
+					{
+						ev.Item.Drop();//Idk how to not have it picked up
+						ev.Allow = false;// This deletes the item :(
+					}
+
+				}
 			}
 		}//The server operater can set if SCP-343 should convert items or just drop items. This is due to things like 100 flashlights lagging the server.
 
@@ -119,10 +115,8 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value) && PluginManager.Manager.Server.Round.Duration >= (int)plugin.GetConfigInt("scp343_opendoortime"))
 			{
-				if (value)
-				{
-					ev.Allow = true;
-				}
+				if (!value) return;
+				ev.Allow = true;
 			}
 		}// Allows 343 to open every door after a set amount of seconds.
 
@@ -130,19 +124,26 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
-				if (value && ev.Attacker.TeamRole.Team == Smod2.API.Team.SCP)
+				if (!value) return;
+				if (ev.Attacker != null)
 				{
-					if (plugin.GetConfigInt("scp343_hp") == -1)
+					if (ev.Attacker.TeamRole.Team == Team.SCP)
 					{
-						ev.Player.SetGodmode(true);
+						ev.Damage = 0;
 					}
-					if (ev.DamageType == DamageType.LURE)
-					{
-						{
-							ev.Player.Kill(DamageType.LURE);
-						}
-					}
+				}
+
+				if (plugin.GetConfigInt("scp343_hp") == -1)
+				{
 					ev.Damage = 0;
+					ev.Player.SetGodmode(true);
+				}
+
+				if (ev.DamageType == DamageType.LURE)
+				{
+					{
+						ev.Player.Kill(DamageType.LURE);
+					}
 				}
 			}
 		}// Cannot be damaged by SCP forces.
@@ -153,37 +154,33 @@ namespace SCP_343
 			{
 				if ((SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Activator.SteamId, out value)))
 				{
-					if (value)
+					if (!value) return;
+					if (plugin.GetConfigBool("scp343_nuke_interact") == true)
 					{
-						if (plugin.GetConfigBool("scp343_nuke_interact") == true)
-						{
-							ev.Cancel = false;
-						}
-						else
-						{
-							ev.Cancel = true;
-						}
+						ev.Cancel = false;
+					}
+					else
+					{
+						ev.Cancel = true;
 					}
 				}
 			}
 		}
-
+		
 		public void OnStopCountdown(WarheadStopEvent ev)
 		{
 			if (ev.Activator != null)
 			{
 				if ((SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Activator.SteamId, out value)))
 				{
-					if (value)
+					if (!value) return;
+					if (plugin.GetConfigBool("scp343_nuke_interact") == true)
 					{
-						if (plugin.GetConfigBool("scp343_nuke_interact") == true)
-						{
-							ev.Cancel = false;
-						}
-						else
-						{
-							ev.Cancel = true;
-						}
+						ev.Cancel = false;
+					}
+					else
+					{
+						ev.Cancel = true;
 					}
 				}
 			}
@@ -193,23 +190,21 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
-				if (value)
-				{
-					ev.AllowEscape = false;
-				}
+				if (!value) return;
+				ev.AllowEscape = false;
 			}
 		}//Prevent 343 from escaping.
-
+		
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.active343List.Count >= 1)
+			if (SCP343.active343List.Count >= 10)
 			{
 				SCP343.teamAliveCount.Clear();
 				foreach(Team team in Enum.GetValues(typeof(Team)))
 				{
 					SCP343.teamAliveCount[team] = 0;
 				}
-
+				
 				foreach(Player player in PluginManager.Manager.Server.GetPlayers())
 				{
 					SCP343.teamAliveCount[player.TeamRole.Team]++;
@@ -254,16 +249,14 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
-				if (value)
+				if (!value) return;
+				if (ev.Player.GetGodmode())
 				{
-					if (ev.Player.GetGodmode())
-					{
-						ev.Player.SetGodmode(false);
-					}
-					ev.Player.SetRank(SCP343.checkSteamIDforBadgeColor[ev.Player.SteamId], SCP343.checkSteamIDforBadgeName[ev.Player.SteamId]);
-					SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
-					SCP343.active343List.Remove(ev.Player.SteamId);
+					ev.Player.SetGodmode(false);
 				}
+				ev.Player.SetRank(SCP343.checkSteamIDforBadgeColor[ev.Player.SteamId], SCP343.checkSteamIDforBadgeName[ev.Player.SteamId]);
+				SCP343.checkSteamIDIf343Dict[ev.Player.SteamId] = false;
+				SCP343.active343List.Remove(ev.Player.SteamId);
 			}
 		}// Make sure to remove the player from the active343List so the win condition can go through
 
@@ -272,10 +265,8 @@ namespace SCP_343
 		{
 			if (SCP343.checkSteamIDIf343Dict.TryGetValue(ev.Player.SteamId, out value))
 			{
-				if (value)
-				{
-					ev.TargetPosition = ev.LastPosition;
-				}
+				if (!value) return;
+				ev.TargetPosition = ev.LastPosition;
 			}
 		}//Preventing 343 from going into the pocket dimension.
 

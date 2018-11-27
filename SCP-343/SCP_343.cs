@@ -13,7 +13,7 @@ namespace SCP_343
 	version = "1.2.8",
 	SmodMajor = 3,
 	SmodMinor = 1,
-	SmodRevision = 21
+	SmodRevision = 22
 	)]
 	class SCP343 : Plugin
 	{
