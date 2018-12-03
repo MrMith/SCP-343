@@ -10,7 +10,7 @@ namespace SCP_343
 	name = "SCP-343",
 	description = "SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy.",
 	id = "Mith.SCP-343",
-	version = "1.2.9",
+	version = "1.2.10",
 	SmodMajor = 3,
 	SmodMinor = 1,
 	SmodRevision = 22
@@ -51,7 +51,7 @@ namespace SCP_343
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_opendoortime", 300, Smod2.Config.SettingType.NUMERIC, true, "How long in seconds till SPC-343 can open any door."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_hp", -1, Smod2.Config.SettingType.NUMERIC, true, "How much health should SCP-343 have. Set to -1 for GodMode."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_nuke_interact", true, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 beable to interact with the nuke."));
-
+			
 			//https://github.com/Grover-c13/Smod2/wiki/Enum-Lists#itemtype
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_itemdroplist", new int[] {0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 }, Smod2.Config.SettingType.NUMERIC_LIST, true, "What items SCP-343 drops instead of picking up."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_itemstoconvert", new int[]{13,16,20,21,23,24,25,26}, Smod2.Config.SettingType.NUMERIC_LIST, true, "What items SCP-343 converts."));

@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SCP_343
 {
-	public class EventLogic : EventArgs, IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerUpdate, IEventHandlerPocketDimensionEnter
+	public class EventLogic : EventArgs, IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerUpdate, IEventHandlerPocketDimensionEnter,IEventHandlerRoundEnd
 	{
 		Random RNG = new Random();
 
@@ -135,8 +135,15 @@ namespace SCP_343
 
 				if (plugin.GetConfigInt("scp343_hp") == -1)
 				{
-					ev.Damage = 0;
-					ev.Player.SetGodmode(true);
+					if(ev.DamageType == DamageType.NUKE)
+					{
+						ev.Damage = 10000 + ev.Player.GetHealth();
+					}
+					else
+					{
+						ev.Damage = 0;
+						ev.Player.SetGodmode(true);
+					}
 				}
 
 				if (ev.DamageType == DamageType.LURE)
@@ -282,12 +289,8 @@ namespace SCP_343
 				}
 				foreach (Player player in PluginManager.Manager.Server.GetPlayers())
 				{
-					foreach (String steamid in SCP343.active343List)
+					if(SCP343.active343List.Contains(player.SteamId))
 					{
-						if (steamid != player.SteamId)
-						{
-							return;
-						}
 						foreach (var elevator in Smod2.PluginManager.Manager.Server.Map.GetElevators())
 						{
 							if (elevator.ElevatorType == Smod2.API.ElevatorType.WarheadRoom)
@@ -308,5 +311,24 @@ namespace SCP_343
 				}
 			}
 		}//Checks every 2 seconds if someone flagged for SCP-343 is within 3 x and z units and within 0.5 y units (I think thats a meter?) and teleports them to the top of the elevator. I didn't use the PlayerElevatorUseEvent because I wanted them to be on the top and no chance to squeeze through aka admin teleport.
+
+		public void OnRoundEnd(RoundEndEvent ev)
+		{
+			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
+			{
+				if (SCP343.active343List.Contains(playa.SteamId))
+				{
+					if (playa.GetGodmode())
+					{
+						playa.SetGodmode(false);
+					}
+					playa.SetRank(SCP343.checkSteamIDforBadgeColor[playa.SteamId], SCP343.checkSteamIDforBadgeName[playa.SteamId]);
+					SCP343.checkSteamIDIf343Dict.Clear();
+					SCP343.checkSteamIDforBadgeName.Clear();
+					SCP343.checkSteamIDforBadgeColor.Clear();
+					SCP343.active343List.Clear();
+				}
+			}
+		}
 	}
 }
