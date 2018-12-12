@@ -78,7 +78,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>call "D:\steamcmd\steamapps\common\SCP Secret Laboratory Dedicated Server\test.bat" "$(SolutionDir)libs\RLPL.Services.CertificateValidator.Basic.dll" "$(TargetDir)RLPL.Services.CertificateValidator.Basic.dll"</PreBuildEvent>
   </PropertyGroup>
 </Project>

@@ -2,7 +2,6 @@
 using Smod2.API;
 using Smod2.Commands;
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace SCP_343
@@ -38,11 +37,11 @@ namespace SCP_343
 					{
 						Playa.ChangeRole(Smod2.API.Role.CLASSD,true,true,true);
 						
-						if (plugin.GetConfigInt("scp343_hp") == -1)
+						if (SCP343.SCP343_HP == -1)
 						{
 							Playa.SetGodmode(true);
 						}
-						else { Playa.SetHealth(plugin.GetConfigInt("scp343_hp")); }
+						else { Playa.SetHealth(SCP343.SCP343_HP); }
 						
 						SCP343.checkSteamIDIf343Dict[Playa.SteamId] = true;
 						SCP343.active343List.Add(Playa.SteamId);
@@ -88,4 +87,30 @@ namespace SCP_343
 			return new string[] { "This is version " + plugin.Details.version };
 		}
 	}//Return version for debugging purposes.
+
+	class SCP343_Disable : ICommandHandler
+	{
+		private Plugin plugin;
+
+		public SCP343_Disable(Plugin plugin)
+		{
+			this.plugin = plugin;
+		}
+
+		public string GetCommandDescription()
+		{
+			return "Enables or disables SCP-343.";
+		}
+
+		public string GetUsage()
+		{
+			return "scp343_disable";
+		}
+
+		public string[] OnCall(ICommandSender sender, string[] args)
+		{
+			Smod2.PluginManager.Manager.DisablePlugin(plugin.Details.id);
+			return new string[] { "Disabled " + plugin.Details.id };
+		}
+	}
 }
