@@ -10,7 +10,7 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 | scp343_spawnchance         | Float           | 10            | Percent chance for SPC-343 to spawn at the start of the round. |
 | scp343_opendoortime        | Integer         | 300           | How many seconds till SCP-343 can open any door.               |
 | scp343_hp                  | Integer         | -1            | How much health should SCP-343 have, set to -1 for GodMode.    | 
-| scp343_nuke_interact       | Boolean         | false          | Should SCP-343 beable to interact with the nuke?               |
+| scp343_nuke_interact       | Boolean         | false         | Should SCP-343 beable to interact with the nuke?               |
 | scp343_itemconverttoggle   | Boolean         | false         | Should SPC-343 convert items?                                  |
 | scp343_itemdroplist        | Integer List    | 0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 | What items SCP-343 drops instead of picking up.|
 | scp343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26 | What items SCP-343 converts. |
