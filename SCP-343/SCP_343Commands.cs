@@ -37,22 +37,13 @@ namespace SCP_343
 					{
 						Playa.ChangeRole(Smod2.API.Role.CLASSD,true,true,true);
 						
-						if (SCP343.SCP343_HP == -1)
+						if (EventLogic._343Config.SCP343_HP == -1)
 						{
 							Playa.SetGodmode(true);
 						}
-						else { Playa.SetHealth(SCP343.SCP343_HP); }
-						
-						SCP343.checkSteamIDIf343Dict[Playa.SteamId] = true;
-						SCP343.active343List.Add(Playa.SteamId);
-						if(!SCP343.checkSteamIDforBadgeColor.ContainsKey(Playa.SteamId))
-						{
-							SCP343.checkSteamIDforBadgeColor[Playa.SteamId] = Playa.GetUserGroup().Color;
-						}
-						if(!SCP343.checkSteamIDforBadgeName.ContainsKey(Playa.SteamId))
-						{
-							SCP343.checkSteamIDforBadgeName[Playa.SteamId] = Playa.GetUserGroup().Name;
-						}
+						else { Playa.SetHealth(EventLogic._343Config.SCP343_HP); }
+
+						SCP343.Active343AndBadgeDict.Add(Playa.SteamId,new SCP343.PlayerInfo(Playa.GetUserGroup().Name, Playa.GetUserGroup().Color));
 
 						Playa.SetRank("red", "SCP-343");
 						return new string[] { "Made " + Playa.Name + " SCP343!" };
