@@ -8,7 +8,7 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 | Config Option              | Value Type      | Default Value | Description |
 |   :---:                    |     :---:       |    :---:      |    :---:    |
 | scp343_spawnchance         | Float           | 10            | Percent chance for SPC-343 to spawn at the start of the round. |
-| scp343_opendoortime        | Integer         | 300           | How many seconds till SCP-343 can open any door.               |
+| scp343_opendoortime        | Integer         | 300           | How many seconds after roundstart till SCP-343 can open any door in the game (Like door bypass).               |
 | scp343_hp                  | Integer         | -1            | How much health should SCP-343 have, set to -1 for GodMode.    | 
 | scp343_nuke_interact       | Boolean         | false         | Should SCP-343 beable to interact with the nuke?               |
 | scp343_itemconverttoggle   | Boolean         | false         | Should SPC-343 convert items?                                  |
