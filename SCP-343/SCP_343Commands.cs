@@ -38,11 +38,10 @@ namespace SCP_343
 						{
 							Playa.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
 
-							if (EventLogic._343Config.SCP343_HP == -1)
+							if (EventLogic._343Config.SCP343_HP != -1)
 							{
-								Playa.SetGodmode(true);
+								Playa.SetHealth(EventLogic._343Config.SCP343_HP);
 							}
-							else { Playa.SetHealth(EventLogic._343Config.SCP343_HP); }
 
 							SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().Name, Playa.GetUserGroup().Color));
 

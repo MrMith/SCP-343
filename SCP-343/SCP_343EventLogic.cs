@@ -56,11 +56,10 @@ namespace SCP_343
 				Player TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
 				SCP343.Active343AndBadgeDict.Add(TheChosenOne.SteamId, new SCP343.PlayerInfo(TheChosenOne.GetUserGroup().Name, TheChosenOne.GetUserGroup().Color));
 				
-				if (_343Config.SCP343_HP == -1)
+				if (_343Config.SCP343_HP != -1)
 				{
-					TheChosenOne.SetGodmode(true);
+					TheChosenOne.SetHealth(_343Config.SCP343_HP);
 				}
-				else { TheChosenOne.SetHealth(_343Config.SCP343_HP); }
 				TheChosenOne.SetRank("red", "SCP-343");
 			}
 		}
@@ -68,16 +67,12 @@ namespace SCP_343
 
 		#region OnSetRole
 		/// <summary>
-		/// If you change your role while being 343 it sets godmode off and gives you back your old rank name and color (Not permissions).
+		/// If you change your role while being 343 it gives you back your old rank name and color (Not permissions).
 		/// </summary>
 		public void OnSetRole(PlayerSetRoleEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
-				if (ev.Player.GetGodmode())
-				{
-					ev.Player.SetGodmode(false);
-				}
 				ev.Player.SetRank(SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeColor, SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeName);
 				SCP343.Active343AndBadgeDict.Remove(ev.Player.SteamId);
 			}
@@ -132,39 +127,33 @@ namespace SCP_343
 
 		#region OnPlayerHurt
 		/// <summary>
-		/// Checks if the damage source is SCP and if so sets to 0 and if 343 is godmode and the damage type is either lure (sacrificing to contain 106) or nuke it kills him.
+		/// Checks if 343 should be in godmode and sets damage to 0 if SCP343_HP is set to -1. 343 dies to nuke or femur crusher. (I don't use godmode here because it 
 		/// </summary>
 		public void OnPlayerHurt(PlayerHurtEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
-				if (ev.Attacker != null)
+
+				if (ev.Attacker?.TeamRole.Team == Team.SCP)
 				{
-					if (ev.Attacker.TeamRole.Team == Team.SCP)
-					{
-						ev.Damage = 0;
-					}
+					ev.Damage = 0;
 				}
+
 				if (_343Config.SCP343_HP == -1)
 				{
 					if(ev.DamageType == DamageType.NUKE)
 					{
-						ev.Player.SetGodmode(false);
-						ev.Player.Kill(DamageType.NUKE);
+						ev.Damage = Int32.MaxValue;
 					}
 					else
 					{
 						ev.Damage = 0;
-						ev.Player.SetGodmode(true);
 					}
 				}
 
-				if (ev.DamageType == DamageType.LURE)
+				if (ev.DamageType == DamageType.LURE || ev.DamageType == DamageType.DECONT || ev.DamageType == DamageType.WALL)
 				{
-					{
-						ev.Player.SetGodmode(false);
-						ev.Player.Kill(DamageType.LURE);
-					}
+					ev.Damage = Int32.MaxValue;
 				}
 			}
 		}
@@ -287,10 +276,6 @@ namespace SCP_343
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
-				if (ev.Player.GetGodmode())
-				{
-					ev.Player.SetGodmode(false);
-				}
 				ev.Player.SetRank(SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeColor, SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeName);
 				SCP343.Active343AndBadgeDict.Remove(ev.Player.SteamId);
 			}
@@ -350,7 +335,7 @@ namespace SCP_343
 		}
 		#endregion
 
-		#region OnROundEnd
+		#region OnRoundEnd
 		/// <summary>
 		/// Makes it so 343 loses his divine touch when the round ends.
 		/// </summary>
@@ -360,10 +345,6 @@ namespace SCP_343
 			{
 				if (SCP343.Active343AndBadgeDict.ContainsKey(playa.SteamId))
 				{
-					if (playa.GetGodmode())
-					{
-						playa.SetGodmode(false);
-					}
 					playa.SetRank(SCP343.Active343AndBadgeDict[playa.SteamId].BadgeColor, SCP343.Active343AndBadgeDict[playa.SteamId].BadgeName);
 					SCP343.Active343AndBadgeDict.Remove(playa.SteamId);
 				}
