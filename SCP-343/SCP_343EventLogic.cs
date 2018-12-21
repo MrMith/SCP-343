@@ -20,6 +20,10 @@ namespace SCP_343
 			this.plugin = plugin;
 		}
 
+		#region OnRoundStart
+		/// <summary>
+		/// Plugin checks if its disabled and if not it updates all config values and goes through every person on the server and adds all D-Class to a list and randomly generates a number to see if 343 should spawn and randomly picks one to be 343.
+		/// </summary>
 		public void OnRoundStart(RoundStartEvent ev)
 		{
 			if (plugin.GetConfigBool("scp343_disable"))
@@ -31,8 +35,6 @@ namespace SCP_343
 			_343Config.UpdateValues();
 
 			int randomNumber = RNG.Next(0, 100);
-
-			//Fuck this looks like garbo but I don't wanna rewrite it 
 
 			List<Smod2.API.Player> DClassList = new List<Smod2.API.Player>();
 
@@ -61,8 +63,13 @@ namespace SCP_343
 				else { TheChosenOne.SetHealth(_343Config.SCP343_HP); }
 				TheChosenOne.SetRank("red", "SCP-343");
 			}
-		}//Clears existing playerlist and active343s then stores current and based off spawnchance config option there might be SCP-343.
+		}
+		#endregion
 
+		#region OnSetRole
+		/// <summary>
+		/// If you change your role while being 343 it sets godmode off and gives you back your old rank name and color (Not permissions).
+		/// </summary>
 		public void OnSetRole(PlayerSetRoleEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
@@ -74,10 +81,16 @@ namespace SCP_343
 				ev.Player.SetRank(SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeColor, SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeName);
 				SCP343.Active343AndBadgeDict.Remove(ev.Player.SteamId);
 			}
-		}//Checks if you're supposed to be SCP-343 but changes if you're a different class.
+		}
+		#endregion
 
+		#region OnPlayerPickUpItem
+		/// <summary>
+		/// Does handling to see if 343 should either convert to flashlight (Or different item depends on config) or drop the item.
+		/// </summary>
 		public void OnPlayerPickupItem(PlayerPickupItemEvent ev)
 		{
+			//plugin.Info((int)ev.Item.ItemType + ":" + ev.Item.ItemType.ToString().Length + ":" + ((int)ev.Item.ItemType).ToString().Length);
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
 				if (_343Config.SCP343_ConvertItems)
@@ -101,16 +114,26 @@ namespace SCP_343
 					}
 				}
 			}
-		}//The server operater can set if SCP-343 should convert items or just drop items. This is due to things like 100 flashlights lagging the server.
+		}
+		#endregion
 
+		#region OnDoorAccess
+		/// <summary>
+		/// Checks if 343 should open the door.
+		/// </summary>
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId) && PluginManager.Manager.Server.Round.Duration >= _343Config.SCP343_OpenDoorTime)
 			{
 				ev.Allow = true;
 			}
-		}// Allows 343 to open every door after a set amount of seconds.
+		}
+		#endregion
 
+		#region OnPlayerHurt
+		/// <summary>
+		/// Checks if the damage source is SCP and if so sets to 0 and if 343 is godmode and the damage type is either lure (sacrificing to contain 106) or nuke it kills him.
+		/// </summary>
 		public void OnPlayerHurt(PlayerHurtEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
@@ -122,12 +145,12 @@ namespace SCP_343
 						ev.Damage = 0;
 					}
 				}
-
 				if (_343Config.SCP343_HP == -1)
 				{
 					if(ev.DamageType == DamageType.NUKE)
 					{
-						ev.Damage = 10000 + ev.Player.GetHealth();
+						ev.Player.SetGodmode(false);
+						ev.Player.Kill(DamageType.NUKE);
 					}
 					else
 					{
@@ -139,12 +162,18 @@ namespace SCP_343
 				if (ev.DamageType == DamageType.LURE)
 				{
 					{
+						ev.Player.SetGodmode(false);
 						ev.Player.Kill(DamageType.LURE);
 					}
 				}
 			}
-		}// Cannot be damaged by SCP forces.
+		}
+		#endregion
 
+		#region OnStartCountdown and OnStopCountdown
+		/// <summary>
+		/// Checks config to see if 343 should interact with the nuke or not. This is really buggy is set to false.
+		/// </summary>
 		public void OnStartCountdown(WarheadStartEvent ev)
 		{
 			if (ev.Activator != null)
@@ -179,19 +208,30 @@ namespace SCP_343
 					}
 				}
 			}
-		}//OnStartCountdown and OnStopCountdown so the server owner can configure if SCP-343 can interact with the nuke. Stopping the nuke is buggy and resets it a couple of seconds.
+		}
+		#endregion
 
+		#region OnCheckEscape
+		/// <summary>
+		/// 343 Can't Escape.
+		/// </summary>
+		/// <param name="ev"></param>
 		public void OnCheckEscape(PlayerCheckEscapeEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
 				ev.AllowEscape = false;
 			}
-		}//Prevent 343 from escaping.
-		
+		}
+		#endregion
+
+		#region OnCheckRoundEnd
+		/// <summary>
+		/// Checks all teams to do custom round end if 343 is alive and all MTF for example.
+		/// </summary>
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug)
+			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug && _343Config.SCP343_HP != -1)
 			{
 				SCP343.teamAliveCount.Clear();
 				foreach(Team team in Enum.GetValues(typeof(Team)))
@@ -207,14 +247,14 @@ namespace SCP_343
 				if (SCP343.teamAliveCount[Team.SCP] == 0
 					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
-					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0)
+					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.MTF_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
 				else if (SCP343.teamAliveCount[Team.SCP] == 0
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
-					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0
+					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0
 					&& SCP343.teamAliveCount[Team.NINETAILFOX] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.CI_VICTORY;
@@ -223,22 +263,26 @@ namespace SCP_343
 				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
 					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count 
-					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0)
+					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
 				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count 
-					&& SCP343.teamAliveCount[Team.SCIENTISTS] == 0)
+					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
 					PluginManager.Manager.Server.Round.EndRound();
 				}//If MTF, ClassD and Scientists are dead then SCPS & Chaos win.
 			}
-		}//Check for alive people minus SCP343.
-		 //To-do rewrite this to be better.
+		}
+		#endregion
 
+		#region OnPlayerDie
+		/// <summary>
+		/// In case 343 dies this will remove him from the list.
+		/// </summary>
 		public void OnPlayerDie(PlayerDeathEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
@@ -250,17 +294,26 @@ namespace SCP_343
 				ev.Player.SetRank(SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeColor, SCP343.Active343AndBadgeDict[ev.Player.SteamId].BadgeName);
 				SCP343.Active343AndBadgeDict.Remove(ev.Player.SteamId);
 			}
-		}// Make sure to remove the player from the active343List so the win condition can go through
+		}
+		#endregion
 
-
+		#region OnPocketDimensionEnter
+		/// <summary>
+		/// Prevent 106 from grabbing 343.
+		/// </summary>
 		public void OnPocketDimensionEnter(PlayerPocketDimensionEnterEvent ev)
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
 				ev.TargetPosition = ev.LastPosition;
 			}
-		}//Preventing 343 from going into the pocket dimension.
+		}
+		#endregion
 
+		#region OnUpdate
+		/// <summary>
+		/// Checks every 4 seconds to see if 343 is close to the bottom of the nuke elevator if 343 nuke interact is set to false.
+		/// </summary>
 		public void OnUpdate(UpdateEvent ev)
 		{
 			DateTime timeOnEvent = DateTime.Now;
@@ -294,8 +347,13 @@ namespace SCP_343
 					}
 				}
 			}
-		}//Checks every 2 seconds if someone flagged for SCP-343 is within 3 x and z units and within 0.5 y units (I think thats a meter?) and teleports them to the top of the elevator. I didn't use the PlayerElevatorUseEvent because I wanted them to be on the top and no chance to squeeze through aka admin teleport.
+		}
+		#endregion
 
+		#region OnROundEnd
+		/// <summary>
+		/// Makes it so 343 loses his divine touch when the round ends.
+		/// </summary>
 		public void OnRoundEnd(RoundEndEvent ev)
 		{
 			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
@@ -311,7 +369,13 @@ namespace SCP_343
 				}
 			}
 			SCP343.Active343AndBadgeDict.Clear();
-		}//Makes it so 343 loses his divine touch when the round ends.
+		}
+		#endregion
+
+		#region PluginOptions
+		/// <summary>
+		/// This is all of the config options to meet with the plugin requirements.
+		/// </summary>
 		public class PluginOptions
 		{
 			public int SCP343_HP;
@@ -335,5 +399,6 @@ namespace SCP_343
 				scp343_debug = SCP343.plugin.GetConfigBool("scp343_debug");
 			}
 		}
+		#endregion
 	}
 }

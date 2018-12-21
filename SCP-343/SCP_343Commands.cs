@@ -32,28 +32,31 @@ namespace SCP_343
 				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
 				{
 					string PlayerIDString = Regex.Match(args[0], @"\d+").Value;
-					int PlayerIDInt = Int32.Parse(PlayerIDString);
-					if (Playa.PlayerId == PlayerIDInt)
+					if (Int32.TryParse(PlayerIDString, out int PlayerIDInt))
 					{
-						Playa.ChangeRole(Smod2.API.Role.CLASSD,true,true,true);
-						
-						if (EventLogic._343Config.SCP343_HP == -1)
+						if (Playa.PlayerId == PlayerIDInt)
 						{
-							Playa.SetGodmode(true);
+							Playa.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
+
+							if (EventLogic._343Config.SCP343_HP == -1)
+							{
+								Playa.SetGodmode(true);
+							}
+							else { Playa.SetHealth(EventLogic._343Config.SCP343_HP); }
+
+							SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().Name, Playa.GetUserGroup().Color));
+
+							Playa.SetRank("red", "SCP-343");
+							return new string[] { "Made " + Playa.Name + " SCP343!" };
 						}
-						else { Playa.SetHealth(EventLogic._343Config.SCP343_HP); }
-
-						SCP343.Active343AndBadgeDict.Add(Playa.SteamId,new SCP343.PlayerInfo(Playa.GetUserGroup().Name, Playa.GetUserGroup().Color));
-
-						Playa.SetRank("red", "SCP-343");
-						return new string[] { "Made " + Playa.Name + " SCP343!" };
 					}
+					return new string[] {"Couldn't parse playerid."};
 				}
 				return new string[] { "" };
 			}
 			else { return new string[] { "You must put a playerid." }; }
 		}
-	}//Checks if the player's playerid is equal to the one given in the command args.
+	}
 
 	class SCP343_Version : ICommandHandler
 	{ 
@@ -65,7 +68,7 @@ namespace SCP_343
 
 		public string GetCommandDescription()
 		{
-			return "Version History for this plugin.";
+			return "Current version for this plugin.";
 		}
 
 		public string GetUsage()
@@ -77,7 +80,7 @@ namespace SCP_343
 		{
 			return new string[] { "This is version " + plugin.Details.version };
 		}
-	}//Return version for debugging purposes.
+	}
 
 	class SCP343_Disable : ICommandHandler
 	{

@@ -13,7 +13,7 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 | scp343_nuke_interact       | Boolean         | false         | Should SCP-343 beable to interact with the nuke?               |
 | scp343_itemconverttoggle   | Boolean         | false         | Should SPC-343 convert items?                                  |
 | scp343_itemdroplist        | Integer List    | 0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 | What items SCP-343 drops instead of picking up.|
-| scp343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26 | What items SCP-343 converts. |
+| scp343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26,30 | What items SCP-343 converts. |
 | scp343_converteditems      | Integer List    | 15            | What a item should be converted to.       |
 | scp343_disable             | Boolean         | false         | Disable all of SCP-343.       |
 
