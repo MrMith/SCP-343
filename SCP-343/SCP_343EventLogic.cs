@@ -220,7 +220,7 @@ namespace SCP_343
 		/// </summary>
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug && _343Config.SCP343_HP != -1)
+			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug && _343Config.SCP343_HP == -1)
 			{
 				SCP343.teamAliveCount.Clear();
 				foreach(Team team in Enum.GetValues(typeof(Team)))
@@ -238,8 +238,8 @@ namespace SCP_343
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
 					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
 				{
+					Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
 					ev.Status = ROUND_END_STATUS.MTF_VICTORY;
-					PluginManager.Manager.Server.Round.EndRound();
 				}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
 				else if (SCP343.teamAliveCount[Team.SCP] == 0
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
@@ -247,7 +247,7 @@ namespace SCP_343
 					&& SCP343.teamAliveCount[Team.NINETAILFOX] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.CI_VICTORY;
-					PluginManager.Manager.Server.Round.EndRound();
+					Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
 				}//If SCPs, ClassD, Scientists and MTF are dead then Chaos win.
 				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
 					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
@@ -255,14 +255,16 @@ namespace SCP_343
 					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_VICTORY;
-					PluginManager.Manager.Server.Round.EndRound();
+					Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+					Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
 				} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
 				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
 					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count 
 					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
 				{
 					ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
-					PluginManager.Manager.Server.Round.EndRound();
+					Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+					Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
 				}//If MTF, ClassD and Scientists are dead then SCPS & Chaos win.
 			}
 		}
