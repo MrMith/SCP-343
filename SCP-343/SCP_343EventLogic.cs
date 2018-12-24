@@ -216,56 +216,82 @@ namespace SCP_343
 
 		#region OnCheckRoundEnd
 		/// <summary>
-		/// Checks all teams to do custom round end if 343 is alive and all MTF for example.
+		/// Checks all teams to do custom round end if 343 is alive and all MTF for example, and if hp is set to anything but -1 then he is counted as a normal SCP and MTF must kill him like a normal SCP.
 		/// </summary>
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug && _343Config.SCP343_HP == -1)
+			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug)
 			{
 				SCP343.teamAliveCount.Clear();
-				foreach(Team team in Enum.GetValues(typeof(Team)))
+				foreach (Team team in Enum.GetValues(typeof(Team)))
 				{
 					SCP343.teamAliveCount[team] = 0;
 				}
 				
-				foreach(Player player in PluginManager.Manager.Server.GetPlayers())
+				foreach (Player player in PluginManager.Manager.Server.GetPlayers())
 				{
 					SCP343.teamAliveCount[player.TeamRole.Team]++;
+					
 				}
 
-				if (SCP343.teamAliveCount[Team.SCP] == 0
-					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
-					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
-					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
+				if (_343Config.SCP343_HP == -1)
 				{
-					Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
-					ev.Status = ROUND_END_STATUS.MTF_VICTORY;
-				}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
-				else if (SCP343.teamAliveCount[Team.SCP] == 0
-					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
-					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0
-					&& SCP343.teamAliveCount[Team.NINETAILFOX] == 0)
+					if (SCP343.teamAliveCount[Team.SCP] == 0
+						&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
+						&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
+						&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
+					{
+						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 1;
+						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+						ev.Status = ROUND_END_STATUS.MTF_VICTORY;
+					}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
+					else if (SCP343.teamAliveCount[Team.SCP] == 0
+						&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
+						&& SCP343.teamAliveCount[Team.SCIENTIST] == 0
+						&& SCP343.teamAliveCount[Team.NINETAILFOX] == 0)
+					{
+						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
+						ev.Status = ROUND_END_STATUS.CI_VICTORY;
+					}//If SCPs, ClassD, Scientists and MTF are dead then Chaos win.
+					else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0
+						&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
+						&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
+						&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
+					{
+						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
+						ev.Status = ROUND_END_STATUS.SCP_VICTORY;
+					} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
+					else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0
+						&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
+						&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
+					{
+						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
+						ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
+					}//If MTF, ClassD and Scientists are dead then SCPS & Chaos win.
+				}
+				else
 				{
-					ev.Status = ROUND_END_STATUS.CI_VICTORY;
-					Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
-				}//If SCPs, ClassD, Scientists and MTF are dead then Chaos win.
-				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
-					&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
-					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count 
-					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
-				{
-					ev.Status = ROUND_END_STATUS.SCP_VICTORY;
-					Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
-					Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
-				} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
-				else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0 
-					&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count 
-					&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
-				{
-					ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
-					Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
-					Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
-				}//If MTF, ClassD and Scientists are dead then SCPS & Chaos win.
+					if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0
+						&& SCP343.teamAliveCount[Team.CHAOS_INSURGENCY] == 0
+						&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
+						&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
+					{
+						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
+						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
+						ev.Status = ROUND_END_STATUS.SCP_VICTORY;
+					} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
+					else if (SCP343.teamAliveCount[Team.NINETAILFOX] == 0
+						&& SCP343.teamAliveCount[Team.CLASSD] == SCP343.Active343AndBadgeDict.Count
+						&& SCP343.teamAliveCount[Team.SCIENTIST] == 0)
+					{
+						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 1;
+						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
+						ev.Status = ROUND_END_STATUS.SCP_CI_VICTORY;
+					}//If MTF, ClassD and Scientists are dead then SCPS & Chaos win.
+				}
 			}
 		}
 		#endregion

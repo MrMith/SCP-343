@@ -29,9 +29,11 @@ namespace SCP_343
 		{
 			if (args.Length > 0)
 			{
+				Regex regex = new Regex(@"\D+");
+				string PlayerIDString = regex.Replace(args[0],"");
+
 				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
 				{
-					string PlayerIDString = Regex.Match(args[0], @"\d+").Value;
 					if (Int32.TryParse(PlayerIDString, out int PlayerIDInt))
 					{
 						if (Playa.PlayerId == PlayerIDInt)
@@ -42,16 +44,15 @@ namespace SCP_343
 							{
 								Playa.SetHealth(EventLogic._343Config.SCP343_HP);
 							}
-
+							
 							SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().Name, Playa.GetUserGroup().Color));
 
 							Playa.SetRank("red", "SCP-343");
 							return new string[] { "Made " + Playa.Name + " SCP343!" };
 						}
 					}
-					return new string[] {"Couldn't parse playerid."};
 				}
-				return new string[] { "" };
+				return new string[] { "Couldn't parse playerid." };
 			}
 			else { return new string[] { "You must put a playerid." }; }
 		}
