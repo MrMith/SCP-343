@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+
 namespace SCP_343
 {
 	public class EventLogic : EventArgs, IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerUpdate, IEventHandlerPocketDimensionEnter,IEventHandlerRoundEnd
@@ -133,7 +134,6 @@ namespace SCP_343
 		{
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
-
 				if (ev.Attacker?.TeamRole.Team == Team.SCP)
 				{
 					ev.Damage = 0;
@@ -141,19 +141,12 @@ namespace SCP_343
 
 				if (_343Config.SCP343_HP == -1)
 				{
-					if(ev.DamageType == DamageType.NUKE)
-					{
-						ev.Damage = Int32.MaxValue;
-					}
-					else
-					{
-						ev.Damage = 0;
-					}
+					ev.Damage = 0;
 				}
 
-				if (ev.DamageType == DamageType.LURE || ev.DamageType == DamageType.DECONT || ev.DamageType == DamageType.WALL)
+				if (ev.DamageType == DamageType.LURE || ev.DamageType == DamageType.DECONT || ev.DamageType == DamageType.WALL || ev.DamageType == DamageType.NUKE)
 				{
-					ev.Damage = Int32.MaxValue;
+					ev.Damage = ev.Player.GetHealth() + 100;
 				}
 			}
 		}

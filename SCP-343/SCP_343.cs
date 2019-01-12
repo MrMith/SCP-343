@@ -10,14 +10,13 @@ namespace SCP_343
 	name = "SCP-343",
 	description = "SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy.",
 	id = "Mith.SCP-343",
-	version = "1.3.3",
+	version = "1.3.4",
 	SmodMajor = 3,
 	SmodMinor = 2,
-	SmodRevision = 1
+	SmodRevision = 2
 	)]
 	class SCP343 : Plugin
 	{
-
 		public static SCP343 plugin;
 
 		public static IDictionary<string, SCP343.PlayerInfo> Active343AndBadgeDict =
