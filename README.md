@@ -9,9 +9,8 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 |   :---:                    |     :---:       |    :---:      |    :---:    |
 | scp343_spawnchance         | Float           | 10            | Percent chance for SPC-343 to spawn at the start of the round. |
 | scp343_opendoortime        | Integer         | 300           | How many seconds after roundstart till SCP-343 can open any door in the game (Like door bypass).               |
-| scp343_hp                  | Integer         | -1            | How much health should SCP-343 have. Set to -1 for GodMode.    | 
+| scp343_hp                  | Integer         | -1            | How much health should SCP-343 have. Set to -1 for GodMode and if set to anything but -1 then he is counted as a normal SCP and MTF must kill him like a normal SCP.| 
 | scp343_nuke_interact       | Boolean         | false         | Should SCP-343 beable to interact with the nuke?               |
-| scp343_ispassive           | Boolean         | false         | Should SCP-343 be a passive SCP? (Do you need to kill him to end the round.)|
 | scp343_itemconverttoggle   | Boolean         | false         | Should SPC-343 convert items?                                  |
 | scp343_itemdroplist        | Integer List    | 0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 | What items SCP-343 drops instead of picking up.|
 | scp343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26,30 | What items SCP-343 converts. |
@@ -20,7 +19,7 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 
 | Command(s)                 | Value Type      | Description                              |
 |   :---:                    |     :---:       |    :---:                                 |
-| spawnscp343                | PlayerID        | Spawn SCP-343. Example = "spawnscp343 2" |
+| spawn343                   | PlayerID        | Spawn SCP-343 from PlayerID (Number next to name with M menu). Example = "spawn343 2" |
 | scp343_version             | N/A             | Get the version of this plugin           |
 | scp343_disable             | N/A             | Disables all of SCP-343                  |
 

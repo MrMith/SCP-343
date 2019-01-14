@@ -39,7 +39,7 @@ namespace SCP_343
 						if (Playa.PlayerId == PlayerIDInt)
 						{
 							Playa.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
-
+							Playa.GiveItem(ItemType.FLASHLIGHT);
 							if (EventLogic._343Config.SCP343_HP != -1)
 							{
 								Playa.SetHealth(EventLogic._343Config.SCP343_HP);

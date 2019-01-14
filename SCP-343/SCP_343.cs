@@ -10,7 +10,7 @@ namespace SCP_343
 	name = "SCP-343",
 	description = "SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy.",
 	id = "Mith.SCP-343",
-	version = "1.3.4",
+	version = "1.3.5",
 	SmodMajor = 3,
 	SmodMinor = 2,
 	SmodRevision = 2
@@ -52,7 +52,7 @@ namespace SCP_343
 		{
 			this.AddEventHandlers(new EventLogic(this));
 
-			this.AddCommand("spawnscp343", new SpawnSCP343(this));
+			this.AddCommand("spawn343", new SpawnSCP343(this));
 			this.AddCommand("scp343_version", new SCP343_Version(this));
 			this.AddCommand("scp343_disable", new SCP343_Disable(this));
 

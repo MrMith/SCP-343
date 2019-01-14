@@ -56,7 +56,7 @@ namespace SCP_343
 			{
 				Player TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
 				SCP343.Active343AndBadgeDict.Add(TheChosenOne.SteamId, new SCP343.PlayerInfo(TheChosenOne.GetUserGroup().Name, TheChosenOne.GetUserGroup().Color));
-				
+				TheChosenOne.GiveItem(ItemType.FLASHLIGHT);
 				if (_343Config.SCP343_HP != -1)
 				{
 					TheChosenOne.SetHealth(_343Config.SCP343_HP);
@@ -141,6 +141,10 @@ namespace SCP_343
 
 				if (_343Config.SCP343_HP == -1)
 				{
+					if(ev.Player.GetHealth() < 1000)
+					{
+						ev.Player.AddHealth(1000); //This is a bandage patch for plugins like 008 or anything that might come in the future
+					}
 					ev.Damage = 0;
 				}
 
@@ -224,7 +228,6 @@ namespace SCP_343
 				foreach (Player player in PluginManager.Manager.Server.GetPlayers())
 				{
 					SCP343.teamAliveCount[player.TeamRole.Team]++;
-					
 				}
 
 				if (_343Config.SCP343_HP == -1)
@@ -367,6 +370,7 @@ namespace SCP_343
 				if (SCP343.Active343AndBadgeDict.ContainsKey(playa.SteamId))
 				{
 					playa.SetRank(SCP343.Active343AndBadgeDict[playa.SteamId].BadgeColor, SCP343.Active343AndBadgeDict[playa.SteamId].BadgeName);
+					playa.SetHealth(100);
 					SCP343.Active343AndBadgeDict.Remove(playa.SteamId);
 				}
 			}
