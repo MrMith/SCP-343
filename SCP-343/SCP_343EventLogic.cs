@@ -55,7 +55,7 @@ namespace SCP_343
 			if (DClassList.Count > 0 && plugin.pluginManager.Server.GetPlayers().Count > 2)
 			{
 				Player TheChosenOne = DClassList[RNG.Next(DClassList.Count)];
-				SCP343.Active343AndBadgeDict.Add(TheChosenOne.SteamId, new SCP343.PlayerInfo(TheChosenOne.GetUserGroup().Name, TheChosenOne.GetUserGroup().Color));
+				SCP343.Active343AndBadgeDict.Add(TheChosenOne.SteamId, new SCP343.PlayerInfo(TheChosenOne.GetUserGroup().BadgeText, TheChosenOne.GetUserGroup().Color));
 				TheChosenOne.GiveItem(ItemType.FLASHLIGHT);
 				if (_343Config.SCP343_HP != -1)
 				{
