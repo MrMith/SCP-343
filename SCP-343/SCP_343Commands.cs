@@ -40,12 +40,21 @@ namespace SCP_343
 						{
 							Playa.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
 							Playa.GiveItem(ItemType.FLASHLIGHT);
+
 							if (EventLogic._343Config.SCP343_HP != -1)
 							{
 								Playa.SetHealth(EventLogic._343Config.SCP343_HP);
 							}
+
+							if (Playa.GetUserGroup().BadgeText == null)
+							{
+								SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo("", ""));
+							}
+							else
+							{
+								SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().BadgeText, Playa.GetUserGroup().Color));
+							}
 							
-							SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().BadgeText, Playa.GetUserGroup().Color));
 
 							Playa.SetRank("red", "SCP-343");
 							return new string[] { "Made " + Playa.Name + " SCP343!" };
