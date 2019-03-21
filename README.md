@@ -16,6 +16,9 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 | scp343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26,30 | What items SCP-343 converts. |
 | scp343_converteditems      | Integer List    | 15            | What a item should be converted to.       |
 | scp343_disable             | Boolean         | false         | Disable all of SCP-343.       |
+| scp343_broadcast           | Boolean         | true          | When 343 spawns should that person be given information about 343       |
+| scp343_broadcastinfo       | String          | ""            | What 343 is shown if scp343_broadcast is true.       |
+For more information about scp343_broadcastinfo see [This page](https://github.com/MrMith/SCP-343/wiki/scp343_broadcastinfo)
 
 | Command(s)                 | Value Type      | Description                              |
 |   :---:                    |     :---:       |    :---:                                 |

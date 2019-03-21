@@ -54,7 +54,12 @@ namespace SCP_343
 							{
 								SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().BadgeText, Playa.GetUserGroup().Color));
 							}
-							
+
+							if (EventLogic._343Config.SCP343_shouldbroadcast)
+							{
+								Playa.PersonalBroadcast(5, "You're SCP-343! Check your console for more information about SCP-343.", true);
+								Playa.SendConsoleMessage("----------------------------------------------------------- \n" + EventLogic._343Config.SCP343_broadcastinfo + "\n ----------------------------------------------------------- ");
+							}
 
 							Playa.SetRank("red", "SCP-343");
 							return new string[] { "Made " + Playa.Name + " SCP343!" };

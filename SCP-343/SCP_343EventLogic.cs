@@ -41,14 +41,16 @@ namespace SCP_343
 
 			SCP343.Active343AndBadgeDict.Clear();
 
+			if (!(randomNumber <= (float)plugin.GetConfigFloat("scp343_spawnchance")))
+			{
+				return;
+			}
+
 			foreach (Smod2.API.Player Playa in plugin.pluginManager.Server.GetPlayers())
 			{
-				if (randomNumber <= (float)plugin.GetConfigFloat("scp343_spawnchance"))
+				if (Playa.TeamRole.Role == Smod2.API.Role.CLASSD)
 				{
-					if (Playa.TeamRole.Role == Smod2.API.Role.CLASSD)
-					{
-						DClassList.Add(Playa);
-					}
+					DClassList.Add(Playa);
 				}
 			}
 
@@ -64,6 +66,13 @@ namespace SCP_343
 					SCP343.Active343AndBadgeDict.Add(TheChosenOne.SteamId, new SCP343.PlayerInfo(TheChosenOne.GetUserGroup().BadgeText, TheChosenOne.GetUserGroup().Color));
 				}
 				TheChosenOne.GiveItem(ItemType.FLASHLIGHT);
+
+				if (EventLogic._343Config.SCP343_shouldbroadcast)
+				{
+					TheChosenOne.PersonalBroadcast(5, "You're SCP-343! Check your console for more information about SCP-343.", true);
+					TheChosenOne.SendConsoleMessage("----------------------------------------------------------- \n" + EventLogic._343Config.SCP343_broadcastinfo + "\n ---------------------------------------------------------- - ");
+				}
+
 				if (_343Config.SCP343_HP != -1)
 				{
 					TheChosenOne.SetHealth(_343Config.SCP343_HP);
@@ -96,21 +105,21 @@ namespace SCP_343
 			//plugin.Info((int)ev.Item.ItemType + ":" + ev.Item.ItemType.ToString().Length + ":" + ((int)ev.Item.ItemType).ToString().Length);
 			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
-				if (_343Config.SCP343_ConvertItems)
+				if (_343Config.SCP343_convertitems)
 				{
-					if (_343Config.itemConvertList.Contains((int)ev.Item.ItemType))
+					if (_343Config.ItemConvertList.Contains((int)ev.Item.ItemType))
 					{
-						ev.ChangeTo = (ItemType)_343Config.convertedItemList[RNG.Next(_343Config.convertedItemList.Length - 1)];
+						ev.ChangeTo = (ItemType)_343Config.ConvertedItemList[RNG.Next(_343Config.ConvertedItemList.Length - 1)];
 					}
-					if (_343Config.itemBlackList.Contains((int)ev.Item.ItemType))
+					if (_343Config.ItemBlackList.Contains((int)ev.Item.ItemType))
 					{
 						ev.Item.Drop();//Idk how to not have it picked up
 						ev.Allow = false;// This deletes the item :(
 					}
 				}
-				else if (_343Config.SCP343_ConvertItems == false && PluginManager.Manager.Server.Round.Duration >= 3)
+				else if (_343Config.SCP343_convertitems == false && PluginManager.Manager.Server.Round.Duration >= 3)
 				{
-					if (_343Config.itemBlackList.Contains((int)ev.Item.ItemType) || _343Config.itemConvertList.Contains((int)ev.Item.ItemType))
+					if (_343Config.ItemBlackList.Contains((int)ev.Item.ItemType) || _343Config.ItemConvertList.Contains((int)ev.Item.ItemType))
 					{
 						ev.Item.Drop();//Idk how to not have it picked up
 						ev.Allow = false;// This deletes the item :(
@@ -126,7 +135,7 @@ namespace SCP_343
 		/// </summary>
 		public void OnDoorAccess(PlayerDoorAccessEvent ev)
 		{
-			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId) && PluginManager.Manager.Server.Round.Duration >= _343Config.SCP343_OpenDoorTime)
+			if (SCP343.Active343AndBadgeDict.ContainsKey(ev.Player.SteamId) && PluginManager.Manager.Server.Round.Duration >= _343Config.SCP343_opendoortime)
 			{
 				ev.Allow = true;
 			}
@@ -224,7 +233,7 @@ namespace SCP_343
 		/// </summary>
 		public void OnCheckRoundEnd(CheckRoundEndEvent ev)
 		{
-			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.scp343_debug)
+			if (SCP343.Active343AndBadgeDict.Count >= 1 && !_343Config.SCP343_debug)
 			{
 				SCP343.teamAliveCount.Clear();
 				foreach (Team team in Enum.GetValues(typeof(Team)))
@@ -392,24 +401,44 @@ namespace SCP_343
 		public class PluginOptions
 		{
 			public int SCP343_HP;
-			public int[] itemConvertList;
-			public int[] convertedItemList;
-			public int[] itemBlackList;
-			public int SCP343_OpenDoorTime;
+			public int[] ItemConvertList;
+			public int[] ConvertedItemList;
+			public int[] ItemBlackList;
+			public int SCP343_opendoortime;
 			public bool Nuke_Interact;
-			public bool SCP343_ConvertItems;
-			public bool scp343_debug;
+			public bool SCP343_convertitems;
+			public bool SCP343_debug;
+			public bool SCP343_shouldbroadcast;
+			public string SCP343_broadcastinfo;
 
 			public void UpdateValues()
 			{
 				SCP343_HP = SCP343.plugin.GetConfigInt("scp343_hp");
-				itemConvertList = SCP343.plugin.GetConfigIntList("scp343_itemstoconvert");
-				convertedItemList = SCP343.plugin.GetConfigIntList("scp343_converteditems");
-				itemBlackList = SCP343.plugin.GetConfigIntList("scp343_itemdroplist");
-				SCP343_OpenDoorTime = SCP343.plugin.GetConfigInt("scp343_opendoortime");
+				ItemConvertList = SCP343.plugin.GetConfigIntList("scp343_itemstoconvert");
+				ConvertedItemList = SCP343.plugin.GetConfigIntList("scp343_converteditems");
+				ItemBlackList = SCP343.plugin.GetConfigIntList("scp343_itemdroplist");
+				SCP343_opendoortime = SCP343.plugin.GetConfigInt("scp343_opendoortime");
 				Nuke_Interact = SCP343.plugin.GetConfigBool("scp343_nuke_interact");
-				SCP343_ConvertItems = SCP343.plugin.GetConfigBool("scp343_itemconverttoggle");
-				scp343_debug = SCP343.plugin.GetConfigBool("scp343_debug");
+				SCP343_convertitems = SCP343.plugin.GetConfigBool("scp343_itemconverttoggle");
+				SCP343_debug = SCP343.plugin.GetConfigBool("scp343_debug");
+
+				SCP343_shouldbroadcast = SCP343.plugin.GetConfigBool("scp343_broadcast");
+				SCP343_broadcastinfo = SCP343.plugin.GetConfigString("scp343_broadcastinfo");
+
+				string _343info;
+				if(SCP343_broadcastinfo.Length != 0)
+				{
+					_343info = SCP343_broadcastinfo.Replace("343DOORTIME", SCP343_opendoortime.ToString());
+				}
+				else if (SCP343_HP == -1)
+				{
+					_343info = "You are SCP-343, a passive SCP.\n(To be clear this isn't the correct wiki version SCP-343) \nAfter 343DOORTIME seconds you can open any door in the game \nAny weapon/grenade you pick up is morphed into a flashlight.\nYou are NOT counted towards ending the round (Example the round will end if its all NTF and you) \nYou cannot die to anything but lure (106 femur crusher), decontamination, crushed (jumping off at t intersections at heavy) and the nuke.".Replace("343DOORTIME",SCP343_opendoortime.ToString());
+				}
+				else
+				{
+					_343info = "You are SCP-343, a passive SCP.\n(To be clear this isn't the correct wiki version SCP-343) \nAfter 343DOORTIME seconds you can open any door in the game \nAny weapon/grenade you pick up is morphed into a flashlight.\nYou are counted towards ending the round (Example the round will not end if its all NTF and you, it needs to be all SCP and or CI)".Replace("343DOORTIME", SCP343_opendoortime.ToString());
+				}
+				SCP343_broadcastinfo = _343info;
 			}
 		}
 		#endregion

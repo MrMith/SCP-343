@@ -10,7 +10,7 @@ namespace SCP_343
 	name = "SCP-343",
 	description = "SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy.",
 	id = "Mith.SCP-343",
-	version = "1.3.7",
+	version = "1.3.8",
 	SmodMajor = 3,
 	SmodMinor = 3,
 	SmodRevision = 0
@@ -63,7 +63,9 @@ namespace SCP_343
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_nuke_interact", false, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 beable to interact with the nuke."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_disable", false, Smod2.Config.SettingType.BOOL, true, "Should SPC-343 beable to interact with the nuke."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_debug", false, Smod2.Config.SettingType.BOOL, true, "Internal testing config so I stop pushing commits that are broken >:("));
-			
+			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_broadcast", true, Smod2.Config.SettingType.BOOL, true, "When 343 spawns should that person be given information about 343"));
+			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_broadcastinfo", "", Smod2.Config.SettingType.STRING, true, "What 343 is shown if scp343_broadcast is true."));
+
 			//https://github.com/Grover-c13/Smod2/wiki/Enum-Lists#itemtype
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_itemdroplist", new int[] {0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 }, Smod2.Config.SettingType.NUMERIC_LIST, true, "What items SCP-343 drops instead of picking up."));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_itemstoconvert", new int[]{13,16,20,21,23,24,25,26,30}, Smod2.Config.SettingType.NUMERIC_LIST, true, "What items SCP-343 converts."));
