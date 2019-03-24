@@ -3,19 +3,21 @@ using Smod2.API;
 using Smod2.Commands;
 using System;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 namespace SCP_343
 {
 	class SpawnSCP343 : ICommandHandler
-	{ 
-		
+	{
+        EventLogic eventLogic;
 		private readonly Plugin plugin;
-		public SpawnSCP343(Plugin plugin)
+		public SpawnSCP343(Plugin plugin, EventLogic EventLogicMain)
 		{
 			this.plugin = plugin;
-		}
+            eventLogic = EventLogicMain;
+        }
 
-		public string GetCommandDescription()
+        public string GetCommandDescription()
 		{
 			return "This command spawns in someone as SPC-343.";
 		}
@@ -29,7 +31,10 @@ namespace SCP_343
 		{
 			if (args.Length > 0)
 			{
-				Regex regex = new Regex(@"\D+");
+                PluginOptions pluginOptions = eventLogic.GetPluginOptions();
+                Dictionary<string, PlayerInfo> Active343AndBadgeDict = eventLogic.GetActive343();
+
+                Regex regex = new Regex(@"\D+");
 				string PlayerIDString = regex.Replace(args[0],"");
 
 				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
@@ -41,24 +46,24 @@ namespace SCP_343
 							Playa.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
 							Playa.GiveItem(ItemType.FLASHLIGHT);
 
-							if (EventLogic._343Config.SCP343_HP != -1)
+							if (pluginOptions.SCP343_HP != -1)
 							{
-								Playa.SetHealth(EventLogic._343Config.SCP343_HP);
+								Playa.SetHealth(pluginOptions.SCP343_HP);
 							}
 
 							if (Playa.GetUserGroup().BadgeText == null)
 							{
-								SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo("", ""));
+								Active343AndBadgeDict.Add(Playa.SteamId, new PlayerInfo("", ""));
 							}
 							else
 							{
-								SCP343.Active343AndBadgeDict.Add(Playa.SteamId, new SCP343.PlayerInfo(Playa.GetUserGroup().BadgeText, Playa.GetUserGroup().Color));
+								Active343AndBadgeDict.Add(Playa.SteamId, new PlayerInfo(Playa.GetUserGroup().BadgeText, Playa.GetUserGroup().Color));
 							}
 
-							if (EventLogic._343Config.SCP343_shouldbroadcast)
+							if (pluginOptions.SCP343_shouldbroadcast)
 							{
 								Playa.PersonalBroadcast(5, "You're SCP-343! Check your console for more information about SCP-343.", true);
-								Playa.SendConsoleMessage("----------------------------------------------------------- \n" + EventLogic._343Config.SCP343_broadcastinfo + "\n ----------------------------------------------------------- ");
+								Playa.SendConsoleMessage("----------------------------------------------------------- \n" + pluginOptions.SCP343_broadcastinfo + "\n ----------------------------------------------------------- ");
 							}
 
 							Playa.SetRank("red", "SCP-343");
@@ -117,8 +122,8 @@ namespace SCP_343
 
 		public string[] OnCall(ICommandSender sender, string[] args)
 		{
-			Smod2.PluginManager.Manager.DisablePlugin(plugin.Details.id);
-			return new string[] { "Disabled " + plugin.Details.id };
+            plugin.PluginManager.DisablePlugin(plugin);
+            return new string[] { "Disabled " + plugin.Details.id };
 		}
 	}
 }

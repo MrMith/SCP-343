@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory Dedicated Server\sm_plugins\</OutputPath>
+    <OutputPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\sm_plugins\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,7 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Smod2">
-      <HintPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory Dedicated Server\SCPSL_Data\Managed\Smod2.dll</HintPath>
+      <HintPath>..\..\..\..\steamcmd\steamapps\common\SCP Secret Laboratory\SCPSL_Data\Managed\Smod2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PlayerInfo.cs" />
+    <Compile Include="PluginOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -81,6 +83,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>call "D:\steamcmd\steamapps\common\SCP Secret Laboratory Dedicated Server\test.bat" "$(SolutionDir)libs\RLPL.Services.CertificateValidator.Basic.dll" "$(TargetDir)RLPL.Services.CertificateValidator.Basic.dll"</PreBuildEvent>
+    <PreBuildEvent>call "C:\steamcmd\steamapps\common\SCP Secret Laboratory\test.bat" "$(SolutionDir)libs\RLPL.Services.CertificateValidator.Basic.dll" "$(TargetDir)RLPL.Services.CertificateValidator.Basic.dll"</PreBuildEvent>
   </PropertyGroup>
 </Project>
