@@ -12,13 +12,13 @@ namespace SCP_343
 	{
 		Random RNG = new Random();
 
-        public Dictionary<string, PlayerInfo> Active343AndBadgeDict =
-            new Dictionary<string, PlayerInfo>();
+		public Dictionary<string, PlayerInfo> Active343AndBadgeDict =
+			new Dictionary<string, PlayerInfo>();
 
-        public Dictionary<Team, int> teamAliveCount =
-             new Dictionary<Team, int>();
+		public Dictionary<Team, int> teamAliveCount =
+			 new Dictionary<Team, int>();
 
-        public PluginOptions _343Config = new PluginOptions();
+		public PluginOptions _343Config = new PluginOptions();
 
 		private Plugin plugin;
 		public EventLogic(Plugin plugin)
@@ -26,20 +26,20 @@ namespace SCP_343
 			this.plugin = plugin;
 		}
 
-        #region OnRoundStart
-        /// <summary>
-        /// Plugin checks if its disabled and if not it updates all config values and goes through every person on the server and adds all D-Class to a list and randomly generates a number to see if 343 should spawn and randomly picks one d-class to be 343.
-        /// </summary>
-        public void OnRoundStart(RoundStartEvent ev)
-        {
-            if (plugin.GetConfigBool("scp343_disable"))
+		#region OnRoundStart
+		/// <summary>
+		/// Plugin checks if its disabled and if not it updates all config values and goes through every person on the server and adds all D-Class to a list and randomly generates a number to see if 343 should spawn and randomly picks one d-class to be 343.
+		/// </summary>
+		public void OnRoundStart(RoundStartEvent ev)
+		{
+			if (plugin.GetConfigBool("scp343_disable"))
 			{
-                plugin.PluginManager.DisablePlugin(plugin);
+				plugin.PluginManager.DisablePlugin(plugin);
 				return;
 			}
-            
-            _343Config.UpdateValues(plugin);
-               
+			
+			_343Config.UpdateValues(plugin);
+			   
 			int randomNumber = RNG.Next(0, 100);
 
 			List<Smod2.API.Player> DClassList = new List<Smod2.API.Player>();
@@ -84,7 +84,7 @@ namespace SCP_343
 				}
 				TheChosenOne.SetRank("red", "SCP-343");
 			}
-        }
+		}
 		#endregion
 
 		#region OnSetRole
@@ -375,24 +375,5 @@ namespace SCP_343
 			}
 		}
 		#endregion
-
-		#region GetPluginOptions & GetActive343
-		/// <summary>
-		/// Returns current config options.
-		/// </summary>
-		public PluginOptions GetPluginOptions()
-        {
-            return _343Config;
-        }
-
-        /// <summary>
-        /// Returns dictionary of steamids for key and PlayerInfo class for value of all current SCP-343s.
-        /// </summary>
-        public Dictionary<string, PlayerInfo> GetActive343()
-        {
-            return Active343AndBadgeDict;
-        }
-		#endregion
-
 	}
 }

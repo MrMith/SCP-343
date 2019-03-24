@@ -17,7 +17,7 @@ namespace SCP_343
 	{
 		public SCP343 plugin;
 
-        public EventLogic eventLogicVar;
+		public EventLogic eventLogicVar;
 
 		public override void OnDisable()
 		{

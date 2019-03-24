@@ -9,15 +9,15 @@ namespace SCP_343
 {
 	class SpawnSCP343 : ICommandHandler
 	{
-        EventLogic eventLogic;
+		EventLogic eventLogic;
 		private readonly Plugin plugin;
 		public SpawnSCP343(Plugin plugin, EventLogic EventLogicMain)
 		{
 			this.plugin = plugin;
-            eventLogic = EventLogicMain;
-        }
+			eventLogic = EventLogicMain;
+		}
 
-        public string GetCommandDescription()
+		public string GetCommandDescription()
 		{
 			return "This command spawns in someone as SPC-343.";
 		}
@@ -31,10 +31,10 @@ namespace SCP_343
 		{
 			if (args.Length > 0)
 			{
-                PluginOptions pluginOptions = eventLogic.GetPluginOptions();
-                Dictionary<string, PlayerInfo> Active343AndBadgeDict = eventLogic.GetActive343();
+				PluginOptions pluginOptions = eventLogic._343Config;
+				Dictionary<string, PlayerInfo> Active343AndBadgeDict = eventLogic.Active343AndBadgeDict;
 
-                Regex regex = new Regex(@"\D+");
+				Regex regex = new Regex(@"\D+");
 				string PlayerIDString = regex.Replace(args[0],"");
 
 				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
@@ -122,8 +122,8 @@ namespace SCP_343
 
 		public string[] OnCall(ICommandSender sender, string[] args)
 		{
-            plugin.PluginManager.DisablePlugin(plugin);
-            return new string[] { "Disabled " + plugin.Details.id };
+			plugin.PluginManager.DisablePlugin(plugin);
+			return new string[] { "Disabled " + plugin.Details.id };
 		}
 	}
 }
