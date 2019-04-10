@@ -37,37 +37,37 @@ namespace SCP_343
 				Regex regex = new Regex(@"\D+");
 				string PlayerIDString = regex.Replace(args[0],"");
 
-				foreach (Player Playa in PluginManager.Manager.Server.GetPlayers())
+				foreach (Player player in PluginManager.Manager.Server.GetPlayers())
 				{
 					if (Int32.TryParse(PlayerIDString, out int PlayerIDInt))
 					{
-						if (Playa.PlayerId == PlayerIDInt)
+						if (player.PlayerId == PlayerIDInt)
 						{
-							Playa.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
-							Playa.GiveItem(ItemType.FLASHLIGHT);
+							player.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
+							player.GiveItem(ItemType.FLASHLIGHT);
 
 							if (pluginOptions.SCP343_HP != -1)
 							{
-								Playa.SetHealth(pluginOptions.SCP343_HP);
+								player.SetHealth(pluginOptions.SCP343_HP);
 							}
 
-							if (Playa.GetUserGroup().BadgeText == null)
+							if (player.GetUserGroup().BadgeText == null)
 							{
-								Active343AndBadgeDict.Add(Playa.SteamId, new PlayerInfo("", ""));
+								Active343AndBadgeDict.Add(player.SteamId, new PlayerInfo("", ""));
 							}
 							else
 							{
-								Active343AndBadgeDict.Add(Playa.SteamId, new PlayerInfo(Playa.GetUserGroup().BadgeText, Playa.GetUserGroup().Color));
+								Active343AndBadgeDict.Add(player.SteamId, new PlayerInfo(player.GetUserGroup().BadgeText, player.GetUserGroup().Color));
 							}
 
 							if (pluginOptions.SCP343_shouldbroadcast)
 							{
-								Playa.PersonalBroadcast(5, "You're SCP-343! Check your console for more information about SCP-343.", true);
-								Playa.SendConsoleMessage("----------------------------------------------------------- \n" + pluginOptions.SCP343_broadcastinfo + "\n ----------------------------------------------------------- ");
+								player.PersonalBroadcast(5, "You're SCP-343! Check your console for more information about SCP-343.", true);
+								player.SendConsoleMessage("----------------------------------------------------------- \n" + pluginOptions.SCP343_broadcastinfo + "\n ----------------------------------------------------------- ");
 							}
 
-							Playa.SetRank("red", "SCP-343");
-							return new string[] { "Made " + Playa.Name + " SCP343!" };
+							player.SetRank("red", "SCP-343");
+							return new string[] { "Made " + player.Name + " SCP343!" };
 						}
 					}
 				}

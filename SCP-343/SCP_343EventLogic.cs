@@ -12,11 +12,13 @@ namespace SCP_343
 	{
 		Random RNG = new Random();
 
+		DateTime timeOnEvent = DateTime.Now;
+
 		public Dictionary<string, PlayerInfo> Active343AndBadgeDict =
 			new Dictionary<string, PlayerInfo>();
 
-		public Dictionary<Team, int> teamAliveCount =
-			 new Dictionary<Team, int>();
+		public Dictionary<Smod2.API.Team, int> teamAliveCount =
+			 new Dictionary<Smod2.API.Team, int>();
 
 		public PluginOptions _343Config = new PluginOptions();
 
@@ -51,11 +53,11 @@ namespace SCP_343
 				return;
 			}
 
-			foreach (Smod2.API.Player Playa in plugin.PluginManager.Server.GetPlayers())
+			foreach (Smod2.API.Player player in plugin.PluginManager.Server.GetPlayers())
 			{
-				if (Playa.TeamRole.Role == Smod2.API.Role.CLASSD)
+				if (player.TeamRole.Role == Smod2.API.Role.CLASSD)
 				{
-					DClassList.Add(Playa);
+					DClassList.Add(player);
 				}
 			}
 
@@ -155,7 +157,7 @@ namespace SCP_343
 		{
 			if (Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 			{
-				if (ev.Attacker?.TeamRole.Team == Team.SCP)
+				if (ev.Attacker?.TeamRole.Team == Smod2.API.Team.SCP)
 				{
 					ev.Damage = 0;
 				}
@@ -241,48 +243,61 @@ namespace SCP_343
 			if (Active343AndBadgeDict.Count >= 1 && !_343Config.SCP343_debug)
 			{
 				teamAliveCount.Clear();
-				foreach (Team team in Enum.GetValues(typeof(Team)))
+				foreach (Smod2.API.Team team in Enum.GetValues(typeof(Smod2.API.Team)))
 				{
 					teamAliveCount[team] = 0;
 				}
 				
 				foreach (Player player in PluginManager.Manager.Server.GetPlayers())
 				{
+					if (DateTime.Now >= timeOnEvent)
+					{
+						if (Active343AndBadgeDict.ContainsKey(player.SteamId))
+						{
+							UnityEngine.GameObject playerGameObject = ((UnityEngine.GameObject)player.GetGameObject());
+							if (playerGameObject?.GetComponent<ServerRoles>()?.NetworkMyText != "SCP-343" || playerGameObject?.GetComponent<ServerRoles>()?.NetworkMyColor != "red")
+							{
+								player.HideTag(false);
+								player.SetRank("red","SCP-343");
+								timeOnEvent = DateTime.Now.AddSeconds(1);
+							}
+						}
+					}
 					teamAliveCount[player.TeamRole.Team]++;
 				}
 
 				if (_343Config.SCP343_HP == -1)
 				{
-					if (teamAliveCount[Team.SCP] == 0
-						&& teamAliveCount[Team.CHAOS_INSURGENCY] == 0
-						&& teamAliveCount[Team.CLASSD] == Active343AndBadgeDict.Count
-						&& teamAliveCount[Team.SCIENTIST] == 0)
+					if (teamAliveCount[Smod2.API.Team.SCP] == 0
+						&& teamAliveCount[Smod2.API.Team.CHAOS_INSURGENCY] == 0
+						&& teamAliveCount[Smod2.API.Team.CLASSD] == Active343AndBadgeDict.Count
+						&& teamAliveCount[Smod2.API.Team.SCIENTIST] == 0)
 					{
 						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 1;
 						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
 						ev.Status = ROUND_END_STATUS.MTF_VICTORY;
 					}//If SCPs, Chaos, ClassD and Scientists are dead then MTF win.
-					else if (teamAliveCount[Team.SCP] == 0
-						&& teamAliveCount[Team.CLASSD] == Active343AndBadgeDict.Count
-						&& teamAliveCount[Team.SCIENTIST] == 0
-						&& teamAliveCount[Team.NINETAILFOX] == 0)
+					else if (teamAliveCount[Smod2.API.Team.SCP] == 0
+						&& teamAliveCount[Smod2.API.Team.CLASSD] == Active343AndBadgeDict.Count
+						&& teamAliveCount[Smod2.API.Team.SCIENTIST] == 0
+						&& teamAliveCount[Smod2.API.Team.NINETAILFOX] == 0)
 					{
 						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
 						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
 						ev.Status = ROUND_END_STATUS.CI_VICTORY;
 					}//If SCPs, ClassD, Scientists and MTF are dead then Chaos win.
-					else if (teamAliveCount[Team.NINETAILFOX] == 0
-						&& teamAliveCount[Team.CHAOS_INSURGENCY] == 0
-						&& teamAliveCount[Team.CLASSD] == Active343AndBadgeDict.Count
-						&& teamAliveCount[Team.SCIENTIST] == 0)
+					else if (teamAliveCount[Smod2.API.Team.NINETAILFOX] == 0
+						&& teamAliveCount[Smod2.API.Team.CHAOS_INSURGENCY] == 0
+						&& teamAliveCount[Smod2.API.Team.CLASSD] == Active343AndBadgeDict.Count
+						&& teamAliveCount[Smod2.API.Team.SCIENTIST] == 0)
 					{
 						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
 						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
 						ev.Status = ROUND_END_STATUS.SCP_VICTORY;
 					} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
-					else if (teamAliveCount[Team.NINETAILFOX] == 0
-						&& teamAliveCount[Team.CLASSD] == Active343AndBadgeDict.Count
-						&& teamAliveCount[Team.SCIENTIST] == 0)
+					else if (teamAliveCount[Smod2.API.Team.NINETAILFOX] == 0
+						&& teamAliveCount[Smod2.API.Team.CLASSD] == Active343AndBadgeDict.Count
+						&& teamAliveCount[Smod2.API.Team.SCIENTIST] == 0)
 					{
 						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
 						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
@@ -291,18 +306,18 @@ namespace SCP_343
 				}
 				else
 				{
-					if (teamAliveCount[Team.NINETAILFOX] == 0
-						&& teamAliveCount[Team.CHAOS_INSURGENCY] == 0
-						&& teamAliveCount[Team.CLASSD] == Active343AndBadgeDict.Count
-						&& teamAliveCount[Team.SCIENTIST] == 0)
+					if (teamAliveCount[Smod2.API.Team.NINETAILFOX] == 0
+						&& teamAliveCount[Smod2.API.Team.CHAOS_INSURGENCY] == 0
+						&& teamAliveCount[Smod2.API.Team.CLASSD] == Active343AndBadgeDict.Count
+						&& teamAliveCount[Smod2.API.Team.SCIENTIST] == 0)
 					{
 						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 0;
 						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
 						ev.Status = ROUND_END_STATUS.SCP_VICTORY;
 					} //If MTF, Chaos, ClassD and Scientists are dead then SCPs win.
-					else if (teamAliveCount[Team.NINETAILFOX] == 0
-						&& teamAliveCount[Team.CLASSD] == Active343AndBadgeDict.Count
-						&& teamAliveCount[Team.SCIENTIST] == 0)
+					else if (teamAliveCount[Smod2.API.Team.NINETAILFOX] == 0
+						&& teamAliveCount[Smod2.API.Team.CLASSD] == Active343AndBadgeDict.Count
+						&& teamAliveCount[Smod2.API.Team.SCIENTIST] == 0)
 					{
 						Smod2.PluginManager.Manager.Server.Round.Stats.ClassDEscaped = 1;
 						Smod2.PluginManager.Manager.Server.Round.Stats.ScientistsEscaped = 0;
@@ -346,13 +361,13 @@ namespace SCP_343
 		/// </summary>
 		public void OnRoundEnd(RoundEndEvent ev)
 		{
-			foreach (Player playa in Smod2.PluginManager.Manager.Server.GetPlayers())
+			foreach (Player player in Smod2.PluginManager.Manager.Server.GetPlayers())
 			{
-				if (Active343AndBadgeDict.ContainsKey(playa.SteamId))
+				if (Active343AndBadgeDict.ContainsKey(player.SteamId))
 				{
-					playa.SetRank(Active343AndBadgeDict[playa.SteamId].BadgeColor, Active343AndBadgeDict[playa.SteamId].BadgeName);
-					playa.SetHealth(100);
-					Active343AndBadgeDict.Remove(playa.SteamId);
+					player.SetRank(Active343AndBadgeDict[player.SteamId].BadgeColor, Active343AndBadgeDict[player.SteamId].BadgeName);
+					player.SetHealth(100);
+					Active343AndBadgeDict.Remove(player.SteamId);
 				}
 			}
 			Active343AndBadgeDict.Clear();
