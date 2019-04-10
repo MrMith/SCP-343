@@ -396,11 +396,11 @@ namespace SCP_343
 		{
 			if (!_343Config.SCP343_heck) return;
 			
-			if (Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
+			if (ev.Command.ToLower() == "heck343")
 			{
-				if(ev.Command.ToLower() == "heck343")
+				if(Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
 				{
-					if(plugin.Server.Round.Duration >= _343Config.SCP343_HeckTime)
+					if (plugin.Server.Round.Duration >= _343Config.SCP343_HeckTime)
 					{
 						ev.ReturnMessage = "It's too late! You're 343 till death do you part.";
 						return;
@@ -409,8 +409,9 @@ namespace SCP_343
 					ev.ReturnMessage = "You're no longer SCP-343.";
 					return;
 				}
+				ev.ReturnMessage = "Wait you're not 343!";
+				return;
 			}
-			ev.ReturnMessage = "Wait you're not 343!";
 		}
 		#endregion
 	}
