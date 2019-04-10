@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SCP_343
 {
-	public class EventLogic : IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerPocketDimensionEnter,IEventHandlerRoundEnd, IEventHandlerWarheadChangeLever
+	public class EventLogic : IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerPocketDimensionEnter,IEventHandlerRoundEnd, IEventHandlerWarheadChangeLever, IEventHandlerCallCommand
 	{
 		Random RNG = new Random();
 
@@ -75,7 +75,7 @@ namespace SCP_343
 				if (_343Config.SCP343_shouldbroadcast)
 				{
 					TheChosenOne.PersonalBroadcast(5, "You're SCP-343! Check your console for more information about SCP-343.", true);
-					TheChosenOne.SendConsoleMessage("----------------------------------------------------------- \n" + _343Config.SCP343_broadcastinfo + "\n ---------------------------------------------------------- - ");
+					TheChosenOne.SendConsoleMessage("\n----------------------------------------------------------- \n" + _343Config.SCP343_broadcastinfo + "\n ----------------------------------------------------------- ");
 				}
 
 				if (_343Config.SCP343_HP != -1)
@@ -373,6 +373,29 @@ namespace SCP_343
 					ev.Allow = false;
 				}
 			}
+		}
+		#endregion
+
+		#region CallCommand
+		public void OnCallCommand(PlayerCallCommandEvent ev)
+		{
+			if (!_343Config.SCP343_heck) return;
+			
+			if (Active343AndBadgeDict.ContainsKey(ev.Player.SteamId))
+			{
+				if(ev.Command.ToLower() == "heck343")
+				{
+					if(plugin.Server.Round.Duration >= 30)
+					{
+						ev.ReturnMessage = "It's too late! You're 343 till death do you part.";
+						return;
+					}
+					ev.Player.ChangeRole(Role.CLASSD, true,false);
+					ev.ReturnMessage = "You're no longer SCP-343.";
+					return;
+				}
+			}
+			ev.ReturnMessage = "Wait you're not 343!";
 		}
 		#endregion
 	}

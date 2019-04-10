@@ -47,6 +47,7 @@ namespace SCP_343
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_debug", false, true, "Internal testing config so I stop pushing commits that are broken >:("));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_broadcast", true, true, "When 343 spawns should that person be given information about 343"));
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_broadcastinfo", "", true, "What 343 is shown if scp343_broadcast is true."));
+			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_heck", true, true, "Should players be allowed to use the .heck343 client command to respawn themselves as d-class within 30 seconds of round start."));
 
 			//https://github.com/Grover-c13/Smod2/wiki/Enum-Lists#itemtype
 			this.AddConfig(new Smod2.Config.ConfigSetting("scp343_itemdroplist", new int[] {0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 }, true, "What items SCP-343 drops instead of picking up."));
