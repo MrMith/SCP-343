@@ -400,7 +400,7 @@ namespace SCP_343
 			{
 				if(ev.Command.ToLower() == "heck343")
 				{
-					if(plugin.Server.Round.Duration >= 30)
+					if(plugin.Server.Round.Duration >= _343Config.SCP343_HeckTime)
 					{
 						ev.ReturnMessage = "It's too late! You're 343 till death do you part.";
 						return;

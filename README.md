@@ -18,7 +18,8 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 | scp343_disable             | Boolean         | false         | Disable all of SCP-343.       |
 | scp343_broadcast           | Boolean         | true          | When 343 spawns should that person be given information about 343       |
 | scp343_broadcastinfo       | String          | ""            | What 343 is shown if scp343_broadcast is true.       |
-| scp343_heck                | Boolean         | True          | Should players be allowed to use the .heck343 client command to respawn themselves as d-class within 30 seconds of round start.     |
+| scp343_heck                | Boolean         | True          | Should players be allowed to use the .heck343 client command to respawn themselves as d-class within scp343_hecktime seconds of round start.     |
+| scp343_hecktime            | Integer         | 30            | How long people should beable to respawn themselves as d-class.     |
 
 For more information about scp343_broadcastinfo see [This page](https://github.com/MrMith/SCP-343/wiki/scp343_broadcastinfo)
 
