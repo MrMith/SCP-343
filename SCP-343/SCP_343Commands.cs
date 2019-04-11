@@ -44,6 +44,12 @@ namespace SCP_343
 						if (player.PlayerId == PlayerIDInt)
 						{
 							player.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
+
+							foreach (Smod2.API.Item item in player.GetInventory())
+							{
+								item.Remove();
+							}
+
 							player.GiveItem(ItemType.FLASHLIGHT);
 
 							if (pluginOptions.SCP343_HP != -1)

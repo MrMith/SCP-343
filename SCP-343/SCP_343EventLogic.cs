@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace SCP_343
 {
-	public class EventLogic : IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerPocketDimensionEnter,IEventHandlerRoundEnd, IEventHandlerWarheadChangeLever, IEventHandlerCallCommand
+	public class EventLogic : IEventHandlerPlayerPickupItem, IEventHandlerRoundStart, IEventHandlerDoorAccess, IEventHandlerSetRole, IEventHandlerPlayerHurt, IEventHandlerWarheadStartCountdown, IEventHandlerWarheadStopCountdown, IEventHandlerCheckEscape, IEventHandlerCheckRoundEnd, IEventHandlerPlayerDie, IEventHandlerPocketDimensionEnter,IEventHandlerRoundEnd, IEventHandlerWarheadChangeLever, IEventHandlerCallCommand, IEventHandlerPlayerTriggerTesla
 	{
 		Random RNG = new Random();
 
@@ -72,6 +72,12 @@ namespace SCP_343
 				{
 					Active343AndBadgeDict.Add(TheChosenOne.SteamId, new PlayerInfo(TheChosenOne.GetUserGroup().BadgeText, TheChosenOne.GetUserGroup().Color));
 				}
+
+				foreach(Smod2.API.Item item in TheChosenOne.GetInventory())
+				{
+					item.Remove();
+				}
+
 				TheChosenOne.GiveItem(ItemType.FLASHLIGHT);
 
 				if (_343Config.SCP343_shouldbroadcast)
@@ -151,7 +157,7 @@ namespace SCP_343
 
 		#region OnPlayerHurt
 		/// <summary>
-		/// Checks if 343 should be in godmode and sets damage to 0 if SCP343_HP is set to -1. 343 dies to nuke or femur crusher. (I don't use godmode here because it 
+		/// Makes sure 343 doesn't take damage from any damage source if SCP343_HP = -1
 		/// </summary>
 		public void OnPlayerHurt(PlayerHurtEvent ev)
 		{
@@ -391,7 +397,7 @@ namespace SCP_343
 		}
 		#endregion
 
-		#region CallCommand
+		#region CallCommand & TriggerTesla
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
 			if (!_343Config.SCP343_heck) return;
@@ -411,6 +417,14 @@ namespace SCP_343
 				}
 				ev.ReturnMessage = "Wait you're not 343!";
 				return;
+			}
+		}
+
+		public void OnPlayerTriggerTesla(PlayerTriggerTeslaEvent ev)
+		{
+			if (Active343AndBadgeDict.ContainsKey(ev.Player.SteamId) && _343Config.SCP343_HP == -1)
+			{
+				ev.Triggerable = false;
 			}
 		}
 		#endregion
