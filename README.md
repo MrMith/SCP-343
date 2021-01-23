@@ -1,3 +1,6 @@
+# This plugin is archived meaning it will ***NOT*** be updated.
+
+
 # [SCP-343](http://www.scp-wiki.net/scp-343)
 This is a server plugin for [SCP:SL.](https://store.steampowered.com/app/700330/SCP_Secret_Laboratory)
 ## Install Instructions.
