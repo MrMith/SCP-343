@@ -10,27 +10,27 @@ Put SCP-343.dll under the release tab into sm_plugins folder.
 ## Config Options.
 | Config Option              | Value Type      | Default Value | Description |
 |   :---:                    |     :---:       |    :---:      |    :---:    |
-| scp343_spawnchance         | Float           | 10            | Percent chance for SPC-343 to spawn at the start of the round. |
-| scp343_opendoortime        | Integer         | 300           | How many seconds after roundstart till SCP-343 can open any door in the game (Like door bypass).               |
-| scp343_hp                  | Integer         | -1            | How much health should SCP-343 have. Set to -1 for GodMode and if set to anything but -1 then he is counted as a normal SCP and MTF must kill him like a normal SCP.| 
-| scp343_nuke_interact       | Boolean         | false         | Should SCP-343 beable to interact with the nuke?               |
-| scp343_itemconverttoggle   | Boolean         | false         | Should SPC-343 convert items?                                  |
-| scp343_itemdroplist        | Integer List    | 0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 | What items SCP-343 drops instead of picking up.|
-| scp343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26,30 | What items SCP-343 converts. |
-| scp343_converteditems      | Integer List    | 15            | What a item should be converted to.       |
-| scp343_disable             | Boolean         | false         | Disable all of SCP-343.       |
-| scp343_broadcast           | Boolean         | true          | When 343 spawns should that person be given information about 343       |
-| scp343_broadcastinfo       | String          | ""            | What 343 is shown if scp343_broadcast is true.       |
-| scp343_heck                | Boolean         | True          | Should players be allowed to use the .heck343 client command to respawn themselves as d-class within scp343_hecktime seconds of round start.     |
-| scp343_hecktime            | Integer         | 30            | How long people should beable to respawn themselves as d-class.     |
+| 343_spawnchance         | Float           | 10            | Percent chance for SPC-343 to spawn at the start of the round. |
+| 343_opendoortime        | Integer         | 300           | How many seconds after roundstart till SCP-343 can open any door in the game (Like door bypass).               |
+| 343_hp                  | Integer         | -1            | How much health should SCP-343 have. Set to -1 for GodMode and if set to anything but -1 then he is counted as a normal SCP and MTF must kill him like a normal SCP.| 
+| 343_nuke_interact       | Boolean         | false         | Should SCP-343 beable to interact with the nuke?               |
+| 343_itemconverttoggle   | Boolean         | false         | Should SPC-343 convert items?                                  |
+| 343_itemdroplist        | Integer List    | 0,1,2,3,4,5,6,7,8,9,10,11,14,17,19,22,27,28,29 | What items SCP-343 drops instead of picking up.|
+| 343_itemstoconvert      | Integer List    | 13,16,20,21,23,24,25,26,30 | What items SCP-343 converts. |
+| 343_converteditems      | Integer List    | 15            | What a item should be converted to.       |
+| 343_disable             | Boolean         | false         | Disable all of SCP-343.       |
+| 343_broadcast           | Boolean         | true          | When 343 spawns should that person be given information about 343       |
+| 343_broadcastinfo       | String          | ""            | What 343 is shown if scp343_broadcast is true.       |
+| 343_revert              | Boolean         | True          | Should players be allowed to use the .heck343 client command to respawn themselves as d-class within 343_revert_time seconds of round start.     |
+| 343_revert_time         | Integer         | 30            | How long people should beable to respawn themselves as d-class.     |
 
 For more information about scp343_broadcastinfo see [This page](https://github.com/MrMith/SCP-343/wiki/scp343_broadcastinfo)
 
 | Command(s)                 | Value Type      | Description                              |
 |   :---:                    |     :---:       |    :---:                                 |
-| spawn343                   | PlayerID        | Spawn SCP-343 from PlayerID (Number next to name with M menu). Example = "spawn343 2" |
-| scp343_version             | N/A             | Get the version of this plugin           |
-| scp343_disable             | N/A             | Disables all of SCP-343                  |
+| 343spawn                  | PlayerID        | Spawn SCP-343 from PlayerID (Number next to name with M menu). Example = "343spawn 2" |
+| 343_version               | N/A             | Get the version of this plugin           |
+| 343_disable               | N/A             | Disables all of SCP-343                  |
 
 ## Lore Friendly Description 
 SCP-343 is a passive immortal D-Class Personnel. He spawns with one Flashlight and any weapon he picks up is morphed to prevent violence. He seeks to help out who he deems worthy. 
