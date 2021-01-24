@@ -35,7 +35,7 @@ namespace SCP_343
 		public readonly float spawnchance = 10f; //Percent chance for SPC-343 to spawn at the start of the round. (0 - 100%)
 
 		[ConfigOption]
-		public readonly float opendoortime = 3f; //How many seconds till SCP-343 can open any door.
+		public readonly float opendoortime = 300f; //How many seconds till SCP-343 can open any door.
 
 		[ConfigOption]
 		public readonly bool itemconverttoggle = true;
