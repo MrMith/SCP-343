@@ -485,28 +485,24 @@ namespace SCP_343
 			///If the <see cref="SCP_343Manager.Is343"/> is true on the Player then we know that player is an active instance of SCP-343.
 			if (Ply.TryGetComponent(out SCP_343Manager _343Manager))
 			{
-				plugin.Info("Does exist");
 				return _343Manager.Is343;
 			}
 			else
 			{
-				plugin.Info("will exist?");
 				Add343Manager(Ply);
 			}
-			plugin.Info("Doesn't exist");
 			return false;
 		}
 
 		public bool Is343(Player Ply)
 		{
-			plugin.Info($"Ply: {Ply}");
-			
-			var test = (GameObject)Ply.GetGameObject();
-			plugin.Info($"test: {test == null}");
-			var hub = ReferenceHub.GetHub(test);
-			plugin.Info($"hub: {hub == null}");
 			/// Here we get the Smod2 player object and then we use the <see cref="Player.GetGameObject()"/> which returns a default C# Object and then we cast into a UnityEngine GameObject so SCP:SL's ReferenceHub can find the player.
+
+			GameObject PlayerGameObject = (GameObject)Ply.GetGameObject();
+			ReferenceHub hub = ReferenceHub.GetHub(PlayerGameObject);
 			return Is343(hub);
+
+			///Could also be done like return Is343(ReferenceHub.GetHub((GameObject)Ply.GetGameObject()));
 		}
 
 		public SCP_343Manager Get343Manager(ReferenceHub Ply)
