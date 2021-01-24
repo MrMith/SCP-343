@@ -24,7 +24,7 @@ namespace SCP_343
 
 		public string GetUsage()
 		{
-			return "spawnscp343 PlayerID";
+			return "spawn343 PlayerID";
 		}
 
 		public string[] OnCall(ICommandSender sender, string[] args)
@@ -32,7 +32,6 @@ namespace SCP_343
 			if (args.Length > 0)
 			{
 				PluginOptions pluginOptions = eventLogic._343Config;
-				Dictionary<string, PlayerInfo> Active343AndBadgeDict = eventLogic.Active343AndBadgeDict;
 
 				Regex regex = new Regex(@"\D+");
 				string PlayerIDString = regex.Replace(args[0],"");
@@ -43,27 +42,31 @@ namespace SCP_343
 					{
 						if (player.PlayerId == PlayerIDInt)
 						{
-							player.ChangeRole(Smod2.API.Role.CLASSD, true, true, true);
+							player.ChangeRole(Smod2.API.RoleType.CLASSD, true, true, true);
 
+							SCP_343Manager _343Manager = eventLogic.Get343Manager(player);
+							_343Manager.Is343 = true;
 							foreach (Smod2.API.Item item in player.GetInventory())
 							{
 								item.Remove();
 							}
 
-							player.GiveItem(ItemType.FLASHLIGHT);
+							player.GiveItem(Smod2.API.ItemType.FLASHLIGHT);
 
 							if (pluginOptions.SCP343_HP != -1)
 							{
-								player.SetHealth(pluginOptions.SCP343_HP);
+								player.HP = pluginOptions.SCP343_HP;
 							}
 
 							if (player.GetUserGroup().BadgeText == null)
 							{
-								Active343AndBadgeDict.Add(player.SteamId, new PlayerInfo("", ""));
+								_343Manager.PreviousBadgeColor = "";
+								_343Manager.PreviousBadgeName = "";
 							}
 							else
 							{
-								Active343AndBadgeDict.Add(player.SteamId, new PlayerInfo(player.GetUserGroup().BadgeText, player.GetUserGroup().Color));
+								_343Manager.PreviousBadgeColor = player.GetUserGroup().Color;
+								_343Manager.PreviousBadgeName = player.GetUserGroup().BadgeText;
 							}
 
 							if (pluginOptions.SCP343_shouldbroadcast)
@@ -73,7 +76,7 @@ namespace SCP_343
 							}
 
 							player.SetRank("red", "SCP-343");
-							return new string[] { "Made " + player.Name + " SCP343!" };
+							return new string[] { "Made " + player.Name + " SCP-343!" };
 						}
 					}
 				}
@@ -98,7 +101,7 @@ namespace SCP_343
 
 		public string GetUsage()
 		{
-			return "scp343_version";
+			return $"{plugin.Details.configPrefix}_version";
 		}
 
 		public string[] OnCall(ICommandSender sender, string[] args)
@@ -118,12 +121,12 @@ namespace SCP_343
 
 		public string GetCommandDescription()
 		{
-			return "Enables or disables SCP-343.";
+			return $"Enables or disables {plugin.Details.id}";
 		}
 
 		public string GetUsage()
 		{
-			return "scp343_disable";
+			return $"{plugin.Details.configPrefix}_disable";
 		}
 
 		public string[] OnCall(ICommandSender sender, string[] args)
